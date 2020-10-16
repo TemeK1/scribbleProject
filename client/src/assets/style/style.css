@@ -1,0 +1,144 @@
+body {
+  background-color: #f9fae3;
+}
+
+.App {
+  overflow-x: hidden;
+  position: relative;
+}
+
+#delete {
+  font-weight: bold;
+  float: right;
+}
+
+@media all and (max-width: 700px) {
+
+  #colors {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: auto;
+  }
+
+  #colors td {
+    display: inline-flex;
+    border: 1px dashed black;
+    width: auto;
+    height: auto;
+    flex-grow: 1;
+    float: none;
+    order: 0;
+  }
+
+  #colors td input {
+    opacity: 1.0;
+  }
+
+  #arrowUp, #arrowDown {
+    opacity: 0;
+  }
+
+  #delete {
+    float: none !important;
+  }
+
+  #text {
+    width: 90%;
+  }
+
+  #title {
+    width: 90%;
+  }
+
+  #flex {
+    display: flex;
+    flex-direction: column-reverse;
+    margin-top: 1%;
+    width: auto;
+  }
+
+  #flex .Note {
+    width: 96% !important;
+    min-height: 10vh;
+    left: 0 !important;
+    margin: 0 0 0.3% 0;
+    padding: 0 2% 0 2%;
+    flex-grow: 1;
+    float: none;
+  }
+
+  .Title {
+    font-weight: bold;
+    text-decoration: underline;
+  }
+
+  .Text {
+  }
+}
+
+@media all and (min-width: 701px) {
+
+.Note {
+  border-radius: 10px;
+  max-width: 20%;
+  min-height: 5%;
+  position: absolute;
+  padding: 1% 1% 1% 1%;
+}
+
+.Title {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.Text {
+}
+
+.Full {
+  width: 100vw;
+  height: 100vh;
+}
+
+#arrowUp, #arrowDown {
+  display: none;
+}
+
+#text {
+  width: 100%;
+}
+
+#title {
+  width: 100%;
+}
+
+#colors {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: auto;
+}
+
+#colors td {
+  border: 1px dashed black;
+  display: inline-flex;
+  flex-grow: 1;
+  float: none;
+  height: auto;
+  order: 0;
+  width: auto;
+}
+
+#colors td input {
+  opacity: 1.0;
+}
+
+.Save {
+  float: right;
+}
+
+.Add {
+  position: absolute;
+
+}
+}
