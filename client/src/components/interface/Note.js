@@ -1,4 +1,9 @@
 import React from 'react';
+import arrowUp from '../../assets/images/arrowUp.png';
+import arrowDown from '../../assets/images/arrowDown.png';
+import cancelNote from '../../assets/images/cancelNote.png';
+import editNote from '../../assets/images/editNote.png';
+import removeNote from '../../assets/images/removeNote.png';
 
 class Note extends React.Component {
   constructor(props) {
@@ -36,6 +41,7 @@ class Note extends React.Component {
   }
 
   setActivity() {
+
     if (this.state.active === false) {
       this.setState({active:true});
     } else {
@@ -47,6 +53,7 @@ class Note extends React.Component {
     e.stopPropagation();
     this.props.delete(this.props.order);
   }
+
 
   handleChange(e) {
     let obj = e.target;
@@ -90,42 +97,36 @@ class Note extends React.Component {
     let color = [];
 
     if (this.state.active) {
-      element.push(<input type="text" id="title" name="title" value={this.state.title} onChange={this.handleChange}/>);
-      element.push(<textarea rows="10" cols="20" id="text" name="text" value={this.state.text} onChange={this.handleChange} />);
-      if (this.props.color === "#FF0000") {
-        element.push(<div id="delete" style={{color: "black"}} onClick={e => this.delete(e)}>X</div>);
-      } else {
-        element.push(<div id="delete" style={{color: "red"}} onClick={e => this.delete(e)}>X</div>);
-      }
-      element.push(<button className="Save">Save</button>);
       for (let c of this.props.colors) {
         let checked = false;
         if (this.state.color === c.color) {
           checked = true;
         }
 
-        color.push(<td key={c.color} style={{backgroundColor: c.color}}>
-         <input type="radio" name="color" id={c.color} checked={checked} value={c.color} onChange={this.handleChange} /></td>);
+        color.push(<span className="radioColor" key={c.color} id={c.color} style={{backgroundColor: c.color}}><input type="radio" name="color" checked={checked} value={c.color} onChange={this.handleChange} /></span>);
       }
-
-
-    } else {
-      element.push(<React.Fragment>{this.props.title}</React.Fragment>);
-      element.push(<React.Fragment>{this.props.text}</React.Fragment>);
-      element.push(<div id="arrowUp" onClick={e => this.changeOrder(e)} value="1">Up</div>);
-      element.push(<div id="arrowDown"onClick={e => this.changeOrder(e)} value="0">Down</div>);
     }
 
-
+    let content = this.state.active ?
+    <div>
+    <div className="noteOptions">
+    <div id="cancel" onClick={() => this.setActivity()}><img src={cancelNote} alt="Cancel" width="32" height="32" /></div>
+    <div id="delete" onClick={e => this.delete(e)}><img src={removeNote} alt="Cancel" width="32" height="32" /></div>
+    <input type="image" src={editNote} className="Edit" width="32" height="32" alt="Edit"></input>
+    </div>
+    <input type="text" id="title" name="title" value={this.state.title} onChange={this.handleChange} style={{backgroundColor: this.state.color, border: '0px'}}/>
+    <textarea rows="5" cols="20" id="text" name="text" value={this.state.text} onChange={this.handleChange} style={{backgroundColor: this.state.color, border: '0px'}} />
+    <div className="colors">{color}</div>
+    </div>:<div><div className="Title">{this.props.title}</div><div className="Text">{this.props.text}</div>
+    <div id="arrowUp" onClick={e => this.changeOrder(e)} value="1"><img src={arrowUp} alt="Arrow up" width="32" height="32" /></div>
+    <div id="arrowDown"onClick={e => this.changeOrder(e)} value="0"><img src={arrowDown} alt="Arrow down" width="32" height="32" /></div>
+    </div>;
 
     return (
       <div id={this.props.id} draggable="true" className="Note" style={{backgroundColor: this.props.color, top: this.props.top, left: this.props.left, order: this.props.id}}
        onDragStart={this.onDragStart} onClick={this.click}>
       <form className="Edit" onSubmit={this.handleSubmit}>
-      {element[2]} {element[4]} {element[5]}
-      <div className="Title">{element[0]}</div><div className="Text">{element[1]}</div>
-      <table id="colors"><tbody><tr>{color}</tr></tbody></table>
-      {element[3]}
+      {content}
       </form></div>);
   }
 

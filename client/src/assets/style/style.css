@@ -12,6 +12,19 @@ body {
   float: right;
 }
 
+.Title {
+  font-size: 16;
+  font-weight: bold;
+  text-decoration: underline;
+  text-align: center;
+  padding: 0 6%;
+}
+
+.Text {
+  font-size: 16;
+  padding: 0 6%;
+}
+
 @media all and (max-width: 700px) {
 
   #colors {
@@ -68,13 +81,6 @@ body {
     float: none;
   }
 
-  .Title {
-    font-weight: bold;
-    text-decoration: underline;
-  }
-
-  .Text {
-  }
 }
 
 @media all and (min-width: 701px) {
@@ -85,14 +91,6 @@ body {
   min-height: 5%;
   position: absolute;
   padding: 1% 1% 1% 1%;
-}
-
-.Title {
-  font-weight: bold;
-  text-decoration: underline;
-}
-
-.Text {
 }
 
 .Full {
@@ -144,6 +142,34 @@ body {
   flex-direction: row;
 }
 
-.headerRow .add, .headerRow .synchronize {
-  flex-grow: 0.5;
+.headerRow .add, .headerRow .synchronize, .headerRow .response {
+  flex-grow: 0.25;
+}
+
+.response {
+  margin: 0 1vw;
+}
+
+.noteOptions {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  padding: 0 5%;
+}
+
+.colors {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  padding: 0 1%;
+}
+
+.colors .radioColor {
+  height: 24;
+  width: 24;
+  border-radius: 0;
+  border-width: 2;
+  border-color: black;
+  align-items: center;
+  justify-content: center;
 }

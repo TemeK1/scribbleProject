@@ -1,5 +1,6 @@
 import React from 'react';
 import Note from './Note.js';
+import Synchronize from './Synchronize.js'
 import {colors} from '../../assets/colors/color.js';
 
 const API = "http://localhost:9000/notes";
@@ -313,6 +314,7 @@ class Notes extends React.Component {
       <div className="headerRow">
         <button className="add" onClick={this.add}>Add</button>
         <button className="synchronize" onClick={this.add}>Synchronize with database</button>
+        <Synchronize API={this.API} SEND={this.SEND} />
       </div>
       <div id="flex">
          {renderNotes}
