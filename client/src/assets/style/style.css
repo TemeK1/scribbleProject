@@ -137,8 +137,13 @@ body {
   float: right;
 }
 
-.Add {
-  position: absolute;
-
 }
+
+.headerRow {
+  display: flex;
+  flex-direction: row;
+}
+
+.headerRow .add, .headerRow .synchronize {
+  flex-grow: 0.5;
 }

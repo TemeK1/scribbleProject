@@ -7,11 +7,11 @@ class Note extends React.Component {
     let title = JSON.parse(JSON.stringify(this.props.title)),
         text = JSON.parse(JSON.stringify(this.props.text)),
         color = JSON.parse(JSON.stringify(this.props.color)),
-        id = JSON.parse(JSON.stringify(this.props.id));
+        order = JSON.parse(JSON.stringify(this.props.order));
 
     this.state = {
       active: false,
-      id: id,
+      order: order,
       title: title,
       text: text,
       color: color
@@ -32,7 +32,7 @@ class Note extends React.Component {
   }
 
   changeOrder(e) {
-    this.props.order(parseInt(e.target.getAttribute('value')), this.props.id);
+    this.props.changeOrder(parseInt(e.target.getAttribute('value')), this.props.order);
   }
 
   setActivity() {
@@ -45,7 +45,7 @@ class Note extends React.Component {
 
   delete(e) {
     e.stopPropagation();
-    this.props.delete(this.props.id);
+    this.props.delete(this.props.order);
   }
 
   handleChange(e) {
@@ -77,7 +77,7 @@ class Note extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    let note = JSON.parse(JSON.stringify({title: this.state.title, id: this.state.id, text: this.state.text, color: this.state.color}));
+    let note = JSON.parse(JSON.stringify({title: this.state.title, order: this.state.order, text: this.state.text, color: this.state.color}));
     this.props.onSubmit(note);
   }
 

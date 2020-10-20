@@ -14,7 +14,7 @@ const NoteSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: true
     },
-    id: {
+    order: {
       type: Number,
       required: true
     },
