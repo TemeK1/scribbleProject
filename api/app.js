@@ -1,7 +1,9 @@
 var createError = require('http-errors');
 const express = require('express');
+let dotenv = require('dotenv');
+dotenv.config({ path: './bin/.env' });
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://teemu:cRsgq8mbUKy3ki2M@cluster0-shard-00-00.v1vbg.mongodb.net:27017,cluster0-shard-00-01.v1vbg.mongodb.net:27017,cluster0-shard-00-02.v1vbg.mongodb.net:27017/notesScribble?ssl=true&replicaSet=atlas-64hd94-shard-0&authSource=admin&retryWrites=true&w=majority', {useNewUrlParser:true, useUnifiedTopology: true});
+mongoose.connect(process.env.APP_DATABASE_URL, {useNewUrlParser:true, useUnifiedTopology: true});
 const app = new express();
 var path = require('path');
 var cookieParser = require('cookie-parser');
