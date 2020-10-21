@@ -12,10 +12,12 @@ class Note extends React.Component {
     let title = JSON.parse(JSON.stringify(this.props.title)),
         text = JSON.parse(JSON.stringify(this.props.text)),
         color = JSON.parse(JSON.stringify(this.props.color)),
-        order = JSON.parse(JSON.stringify(this.props.order));
+        order = JSON.parse(JSON.stringify(this.props.order)),
+        id = JSON.parse(JSON.stringify(this.props.id));
 
     this.state = {
       active: false,
+      id: id,
       order: order,
       title: title,
       text: text,
@@ -51,7 +53,7 @@ class Note extends React.Component {
 
   delete(e) {
     e.stopPropagation();
-    this.props.delete(this.props.order);
+    this.props.delete(this.props.id);
   }
 
 
@@ -84,7 +86,7 @@ class Note extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    let note = JSON.parse(JSON.stringify({title: this.state.title, order: this.state.order, text: this.state.text, color: this.state.color}));
+    let note = JSON.parse(JSON.stringify({title: this.state.title, order: this.state.order, id: this.state.id, text: this.state.text, color: this.state.color}));
     this.props.onSubmit(note);
   }
 
@@ -93,7 +95,6 @@ class Note extends React.Component {
   }
 
   render() {
-    let element = [];
     let color = [];
 
     if (this.state.active) {
@@ -103,12 +104,13 @@ class Note extends React.Component {
           checked = true;
         }
 
-        color.push(<span className="radioColor" key={c.color} id={c.color} style={{backgroundColor: c.color}}><input type="radio" name="color" checked={checked} value={c.color} onChange={this.handleChange} /></span>);
+        color.push(<div className="radioColor" key={c.color} id={c.color} style={{backgroundColor: c.color}}><input type="radio" name="color" checked={checked} value={c.color} onChange={() => {this.setState({color: c.color})}} /></div>);
       }
     }
 
     let content = this.state.active ?
     <div>
+    <form className="Edit" onSubmit={this.handleSubmit}>
     <div className="noteOptions">
     <div id="cancel" onClick={() => this.setActivity()}><img src={cancelNote} alt="Cancel" width="32" height="32" /></div>
     <div id="delete" onClick={e => this.delete(e)}><img src={removeNote} alt="Cancel" width="32" height="32" /></div>
@@ -117,17 +119,21 @@ class Note extends React.Component {
     <input type="text" id="title" name="title" value={this.state.title} onChange={this.handleChange} style={{backgroundColor: this.state.color, border: '0px'}}/>
     <textarea rows="5" cols="20" id="text" name="text" value={this.state.text} onChange={this.handleChange} style={{backgroundColor: this.state.color, border: '0px'}} />
     <div className="colors">{color}</div>
-    </div>:<div><div className="Title">{this.props.title}</div><div className="Text">{this.props.text}</div>
+    </form>
+    </div>:
+    <div className="nonActive">
+    <div className="Title">{this.props.title}</div><div className="Text">{this.props.text}</div>
+    <div className="arrows">
     <div id="arrowUp" onClick={e => this.changeOrder(e)} value="1"><img src={arrowUp} alt="Arrow up" width="32" height="32" /></div>
-    <div id="arrowDown"onClick={e => this.changeOrder(e)} value="0"><img src={arrowDown} alt="Arrow down" width="32" height="32" /></div>
+    <div id="arrowDown" onClick={e => this.changeOrder(e)} value="0"><img src={arrowDown} alt="Arrow down" width="32" height="32" /></div>
+    </div>
     </div>;
 
     return (
-      <div id={this.props.id} draggable="true" className="Note" style={{backgroundColor: this.props.color, top: this.props.top, left: this.props.left, order: this.props.id}}
+      <div id={this.props.id} draggable="true" className="Note" style={{backgroundColor: this.state.color, top: this.props.top, left: this.props.left, order: this.props.id}}
        onDragStart={this.onDragStart} onClick={this.click}>
-      <form className="Edit" onSubmit={this.handleSubmit}>
       {content}
-      </form></div>);
+      </div>);
   }
 
 }

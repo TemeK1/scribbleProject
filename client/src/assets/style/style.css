@@ -1,5 +1,6 @@
 body {
   background-color: #f9fae3;
+  color: #000000;
 }
 
 .App {
@@ -13,16 +14,19 @@ body {
 }
 
 .Title {
-  font-size: 16;
+  font-size: 16px;
   font-weight: bold;
   text-decoration: underline;
   text-align: center;
-  padding: 0 6%;
+  padding: 1% 6%;
 }
 
 .Text {
-  font-size: 16;
+  font-size: 16px;
   padding: 0 6%;
+  min-height: 80px;
+  padding: 1% 10% 2% 10%;
+  white-space: pre-wrap;
 }
 
 @media all and (max-width: 700px) {
@@ -49,7 +53,24 @@ body {
   }
 
   #arrowUp, #arrowDown {
-    opacity: 0;
+    opacity: 1.0;
+    width: 30px;
+    height: 30px;
+    flex-grow: 0.3;
+  }
+
+  .arrows {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-self: flex-end;
+    position: absolute;
+    z-index: 1;
+  }
+
+  .nonActive {
+    display: flex;
+    flex-direction: column;
   }
 
   #delete {
@@ -137,15 +158,6 @@ body {
 
 }
 
-.headerRow {
-  display: flex;
-  flex-direction: row;
-}
-
-.headerRow .add, .headerRow .synchronize, .headerRow .response {
-  flex-grow: 0.25;
-}
-
 .response {
   margin: 0 1vw;
 }
@@ -165,11 +177,71 @@ body {
 }
 
 .colors .radioColor {
-  height: 24;
-  width: 24;
-  border-radius: 0;
-  border-width: 2;
-  border-color: black;
+  height: 24px;
+  width: 24px;
   align-items: center;
-  justify-content: center;
+  justify-content: space-evenly;
+}
+
+
+
+.headerRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+.synchronize:focus {
+    outline: 0;
+    -webkit-animation:spin 2s linear;
+    -moz-animation:spin 2s linear;
+    animation:spin 2s linear;
+}
+
+@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+
+#logo {
+  display: flex;
+  flex-direction: row;
+}
+
+
+.footer {
+  background-color: #63EBC4;
+  text-align: center;
+  align-content: center;
+  width: 25vw;
+  margin: 0 auto;
+  padding: 0.5%;
+}
+
+.aboutLayer {
+  background-color: #F9FAE3;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vw;
+  z-index: 999;
+}
+
+.aboutLayer p {
+  margin: 1vw 3vw 1vw 3vw;
+}
+
+.aboutLayer p.address {
+  background-color: #6F4E37;
+  color: white;
+  text-align: center;
+  font-weight: 700;
+}
+
+a:active, a:link, a:visited {
+  color: white;
+}
+
+.aboutLayer p:nth-of-type(3) {
+  background-color: green;
 }

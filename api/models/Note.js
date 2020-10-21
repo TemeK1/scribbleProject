@@ -10,9 +10,9 @@ const NoteSchema = new Schema({
         type: String,
         required: [true, "Please provide text"]
     },
-    _id: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true
+    id: {
+      type: Number,
+      required: true
     },
     order: {
       type: Number,
