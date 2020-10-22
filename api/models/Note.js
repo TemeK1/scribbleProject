@@ -12,7 +12,8 @@ const NoteSchema = new Schema({
     },
     id: {
       type: Number,
-      required: true
+      required: true,
+      unique: true
     },
     order: {
       type: Number,

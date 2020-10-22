@@ -1,6 +1,7 @@
 const Note = require('../models/Note.js');
 
 module.exports = async (req,res) => {
+  try {
     const query = { id: req.params.id  };
     const notes = await Note.findOneAndUpdate(query, {
       order: req.params.order,
@@ -12,4 +13,7 @@ module.exports = async (req,res) => {
     res.json({
         notes: notes
     });
+  } catch (error) {
+    res.json({ status: 'Some error occurred while editing a note. Maybe try again in a bit?'});
+  }
 }

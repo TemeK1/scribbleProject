@@ -21,6 +21,7 @@ var indexRouter = require('./routes/index');
 const searchController = require('./controllers/fetchNotes');
 const editNoteController = require('./controllers/editNote');
 const storeNoteController = require('./controllers/storeNote');
+const deleteNoteController = require('./controllers/deleteNote');
 
 function cleanInput(req, res, next) {
   req.body = sanitize(req.body);
@@ -41,6 +42,7 @@ app.use('/', indexRouter);
 app.get('/notes', searchController);
 app.get('/notes/edit/:id/:order/:title/:text/:left/:top/:color', cleanInput, editNoteController);
 app.get('/notes/write/:id/:order/:title/:text/:left/:top/:color', cleanInput, storeNoteController);
+app.get('/notes/delete/:id', deleteNoteController);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -1,40 +1,45 @@
 import React from 'react';
 import Note from './Note.js';
-import Synchronize from './Synchronize.js'
+import Synchronize from './Synchronize.js';
+
+// Import Functions
+import {parseNotes} from '../functions/parseNotes.js';
+import {calcOrder} from '../functions/calcOrder.js';
+import {calcPosition} from '../functions/calcPosition.js';
+import {handleLocalStorage} from '../functions/handleLocalStorage.js';
+import {noteTemplate} from '../functions/noteTemplate.js';
+
+// Import Colors
 import {colors} from '../../assets/colors/color.js';
+
+// Import Images
 import scribbleSquare from '../../assets/images/scribbleSquare.png';
 import addNote from '../../assets/images/addNote.png';
 import synchronizeNotes from '../../assets/images/synchronizeNotes.png';
 
+
+// API Constants
 const API = "http://localhost:9000/notes";
-const SEND = "http://localhost:9000/notes/send";
+const WRITE = "http://localhost:9000/notes/write/";
+const DELETE = "http://localhost:9000/notes/delete/";
 
 class Notes extends React.Component {
   constructor(props) {
     super(props);
 
     let clonedColors = JSON.parse(JSON.stringify(colors));
-    let loadNotes = [];
-    loadNotes = this.localStorage(loadNotes);
-    //localStorage.clear();
+    let loadNotes = handleLocalStorage([]);
 
+    this.state = { "notes": loadNotes, "colors": clonedColors, "active": 0 }
 
-     this.state = {
-       "notes": loadNotes,
-       "colors": clonedColors,
-       "active": 0
-     }
-
-     this.parseNotes = this.parseNotes.bind(this);
-     this.add = this.add.bind(this);
-     this.call = this.call.bind(this);
-     this.dragOver = this.dragOver.bind(this);
-     this.localStorage = this.localStorage.bind(this);
-     this.onDrop = this.onDrop.bind(this);
-     this.onSubmit = this.onSubmit.bind(this);
-     this.order = this.order.bind(this);
-     this.delete = this.delete.bind(this);
-     this.synchronize = this.synchronize.bind(this);
+    this.add = this.add.bind(this);
+    this.call = this.call.bind(this);
+    this.dragOver = this.dragOver.bind(this);
+    this.onDrop = this.onDrop.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
+    this.order = this.order.bind(this);
+    this.delete = this.delete.bind(this);
+    this.synchronize = this.synchronize.bind(this);
   }
 
 
@@ -55,10 +60,8 @@ class Notes extends React.Component {
   }
 
   synchronize() {
-
-
     try {
-      let clonedNotes = this.parseNotes();
+      let clonedNotes = parseNotes(this.state.notes);
       fetch(API)
       .then(response => response.json())
       .then(data => data.notes.map(item => {
@@ -80,76 +83,22 @@ class Notes extends React.Component {
     this.setState(this.state);
   }
 
-  localStorage(loadNotes) {
-
-    Storage.prototype.getObj = function(key) {
-      return JSON.parse(this.getItem(key));
-    }
-
-    Storage.prototype.setObj = function(key, obj) {
-      return this.setItem(key,(obj));
-    }
-
-    if (loadNotes) {
-      for (let n of loadNotes) {
-        localStorage.setObj(n.id, JSON.stringify({
-          "id": n.id,
-          "order": n.order,
-          "title": n.title,
-          "text": n.text,
-          "left": n.left,
-          "top": n.top,
-          "color": n.color,
-          "time": n.time}));
-      }
-
-      for (let i = 0; i < localStorage.length; i++) {
-        let obj = localStorage.getObj(localStorage.key(i));
-
-        if (isNaN(obj.id) === false) {
-          loadNotes.push({
-            "id":obj.id,
-            "order": obj.order,
-            "title": obj.title,
-            "text": obj.text,
-            "left": obj.left,
-            "top": obj.top,
-            "color": obj.color,
-            "time": obj.time
-          });
-        }
-      }
-
-      for (let i = 0; i < loadNotes.length; i++) {
-        for (let j = loadNotes.length -1; j > i; j--) {
-          if (loadNotes[i].id === loadNotes[j].id) {
-            loadNotes.splice(j, 1);
-          }
-        }
-      }
-
-      return loadNotes;
-    }
-
-    return [];
-  }
-
+  /*
+  * Responsible for adding a template for new note.
+  */
   add() {
-    let id = 1;
-    if (this.state.notes) {
-      id = this.state.notes.length + 1;
-    }
 
-    let newNote = {"id": id, "order": id, "title": "sample titleX", "text": "sample textX", "left": "25%", "top": "25%", "color": "#AFD5AA", "time": new Date()};
-    let clonedNotes = this.parseNotes();
+    let id = 1;
+    if (this.state.notes) id = this.state.notes.length + 1;
+
+    let newNote = noteTemplate(id);
+    let clonedNotes = parseNotes(this.state.notes);
 
     clonedNotes.push(newNote);
 
-    clonedNotes = this.localStorage(clonedNotes);
+    clonedNotes = handleLocalStorage(clonedNotes);
 
-    this.setState({
-      notes: clonedNotes
-    });
+    this.setState({ notes: clonedNotes });
   }
 
   call(id, callBack) {
@@ -164,65 +113,24 @@ class Notes extends React.Component {
   onDrop(e) {
     e.preventDefault();
     let id = parseInt(e.dataTransfer.getData("text/plain"));
+    let clonedNotes = parseNotes(this.state.notes);
+    clonedNotes = calcPosition(clonedNotes, e.clientX, e.clientY, id);
+    clonedNotes = handleLocalStorage(clonedNotes);
 
-    let clonedNotes = this.parseNotes();
-    for (let i = 0; i < clonedNotes.length; i++) {
-      if (clonedNotes[i].id === id) {
-        let top = (e.clientY / window.innerHeight) * 100;
-        let left = (e.clientX / window.innerWidth) * 100;
-        clonedNotes[i].top = top + "%";
-        clonedNotes[i].left = left + "%";
-      }
-    }
-
-    clonedNotes = this.localStorage(clonedNotes);
-
-    this.setState({
-      notes: clonedNotes
-    });
+    this.setState({ notes: clonedNotes });
 
   }
 
   order(direction, order) {
-    let notes = this.parseNotes();
-
-    if (direction === 1) {
-      for (let i = notes.length -1; i >= 0; i--) {
-        if (notes[i].order === order) {
-          for (let j = 0; j < notes.length; j++) {
-            if ((notes[j].order - order) === 1) {
-              notes[i].order = notes[j].order;
-              notes[j].order = order;
-              break;
-            }
-          }
-          break;
-        }
-      }
-    } else {
-      for (let i = 0; i < notes.length; i++) {
-        if (notes[i].order === order) {
-          for (let j = 0; j < notes.length; j++) {
-            if ((order - notes[j].order) === 1) {
-              notes[i].order = notes[j].order;
-              notes[j].order = order;
-              break;
-            }
-          }
-          break;
-        }
-      }
-    }
-
-    notes = this.localStorage(notes);
-    this.setState({
-      notes: notes
-    });
+    let notes = parseNotes(this.state.notes);
+    notes = calcOrder(direction, order, notes);
+    notes = handleLocalStorage(notes);
+    this.setState({ notes: notes });
   }
 
   onSubmit(note) {
 
-    let clonedNotes = this.parseNotes();
+    let clonedNotes = parseNotes(this.state.notes);
 
     for (let n of clonedNotes) {
       if (n.id === note.id) {
@@ -231,41 +139,29 @@ class Notes extends React.Component {
         n.color = note.color;
       }
     }
-    clonedNotes = this.localStorage(clonedNotes);
-    this.setState({notes: clonedNotes});
+    clonedNotes = handleLocalStorage(clonedNotes);
+    this.setState({ notes: clonedNotes });
   }
 
   delete(id) {
     let confirmRemove = window.confirm("Do you want to remove the note?");
     if (confirmRemove) {
-      let clonedNotes = this.parseNotes();
+      let clonedNotes = parseNotes(this.state.notes);
       for (let i = 0; i < clonedNotes.length; i++) {
         if (clonedNotes[i].id === id) {
           clonedNotes.splice(i, 1);
-          localStorage.removeItem(id);
+          handleLocalStorage.removeItem(id);
         }
       }
 
-      this.setState({
-        notes: clonedNotes
-      });
+      this.setState({ notes: clonedNotes });
     }
 
-  }
-
-  parseNotes() {
-    let notes = [];
-    if (this.state.notes) {
-      for (let note of this.state.notes) {
-        notes.push(JSON.parse(JSON.stringify(note)));
-      }
-    }
-    return notes;
   }
 
   render() {
 
-    let notes = this.parseNotes();
+    let notes = parseNotes(this.state.notes);
     let renderNotes = [];
 
     for (let note of notes) {
@@ -282,9 +178,7 @@ class Notes extends React.Component {
         <input type="image" src={synchronizeNotes} className="synchronize" width="48" height="48" alt="Synchronize notes with database" title="Synchronize" onClick={this.synchronize}></input>
         <Synchronize API={this.API} SEND={this.SEND} />
       </div>
-      <div id="flex">
-         {renderNotes}
-      </div>
+      <div id="flex">{renderNotes}</div>
       </div>);
   }
 
