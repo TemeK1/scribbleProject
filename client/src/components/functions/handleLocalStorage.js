@@ -12,7 +12,7 @@ export function handleLocalStorage(loadNotes) {
     return this.setItem(key,(obj));
   }
 
-  if (loadNotes) {
+
     for (let n of loadNotes) {
       localStorage.setObj(n.id, JSON.stringify({
         "id": n.id,
@@ -51,7 +51,5 @@ export function handleLocalStorage(loadNotes) {
     }
 
     return loadNotes;
-  }
 
-  return [];
 }

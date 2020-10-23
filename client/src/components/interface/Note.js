@@ -35,10 +35,11 @@ class Note extends React.Component {
 
   click() {
     //this.props.call(this.props.id, this.setActivity);
-    this.setState({active:true});
+    if (!this.state.active) this.setState({active:true});
   }
 
   changeOrder(e) {
+    e.stopPropagation();
     this.props.changeOrder(parseInt(e.target.getAttribute('value')), this.props.order);
   }
 
@@ -65,7 +66,7 @@ class Note extends React.Component {
     let newstate = {};
 
     if (type === 'radio') {
-      newstate["color"] = value;
+      newstate.color = value;
       this.setState(newstate);
       return;
     }
@@ -77,6 +78,7 @@ class Note extends React.Component {
         obj.setCustomValidity("");
       }
       newstate[field] = value;
+
       this.setState(newstate);
       return;
     }
@@ -88,6 +90,7 @@ class Note extends React.Component {
     e.preventDefault();
     let note = JSON.parse(JSON.stringify({title: this.state.title, order: this.state.order, id: this.state.id, text: this.state.text, color: this.state.color}));
     this.props.onSubmit(note);
+    this.setActivity();
   }
 
   onDragStart(e) {
@@ -112,9 +115,9 @@ class Note extends React.Component {
     <div>
     <form className="Edit" onSubmit={this.handleSubmit}>
     <div className="noteOptions">
-    <div id="cancel" onClick={() => this.setActivity()}><img src={cancelNote} alt="Cancel" width="32" height="32" /></div>
-    <div id="delete" onClick={e => this.delete(e)}><img src={removeNote} alt="Cancel" width="32" height="32" /></div>
-    <input type="image" src={editNote} className="Edit" width="32" height="32" alt="Edit"></input>
+    <div id="cancel" onClick={() => this.setActivity()}><img src={cancelNote} alt="Cancel" title="Cancel" width="32" height="32" /></div>
+    <div id="delete" onClick={e => this.delete(e)}><img src={removeNote} alt="Delete" title="Delete" width="32" height="32" /></div>
+    <input type="image" src={editNote} className="Edit" width="32" height="32" alt="Edit" title="Edit"></input>
     </div>
     <input type="text" id="title" name="title" value={this.state.title} onChange={this.handleChange} style={{backgroundColor: this.state.color, border: '0px'}}/>
     <textarea rows="5" cols="20" id="text" name="text" value={this.state.text} onChange={this.handleChange} style={{backgroundColor: this.state.color, border: '0px'}} />
@@ -124,13 +127,13 @@ class Note extends React.Component {
     <div className="nonActive">
     <div className="Title">{this.props.title}</div><div className="Text">{this.props.text}</div>
     <div className="arrows">
-    <div id="arrowUp" onClick={e => this.changeOrder(e)} value="1"><img src={arrowUp} alt="Arrow up" width="32" height="32" /></div>
-    <div id="arrowDown" onClick={e => this.changeOrder(e)} value="0"><img src={arrowDown} alt="Arrow down" width="32" height="32" /></div>
+    <div id="arrowUp" onClick={e => this.changeOrder(e)}><img src={arrowUp} alt="Arrow up" width="32" height="32" value="1"/></div>
+    <div id="arrowDown" onClick={e => this.changeOrder(e)}><img src={arrowDown} alt="Arrow down" width="32" height="32" value="0" /></div>
     </div>
     </div>;
 
     return (
-      <div id={this.props.id} draggable="true" className="Note" style={{backgroundColor: this.state.color, top: this.props.top, left: this.props.left, order: this.props.id}}
+      <div id={this.props.id} draggable="true" className="Note" style={{backgroundColor: this.state.color, top: this.props.top, left: this.props.left, order: this.props.order}}
        onDragStart={this.onDragStart} onClick={this.click}>
       {content}
       </div>);

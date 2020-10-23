@@ -20,8 +20,9 @@ import synchronizeNotes from '../../assets/images/synchronizeNotes.png';
 
 // API Constants
 const API = "http://localhost:9000/notes";
-const WRITE = "http://localhost:9000/notes/write/";
-const DELETE = "http://localhost:9000/notes/delete/";
+const WRITE = "/write/";
+const EDIT = "/edit/";
+const DELETE = "/delete/";
 
 class Notes extends React.Component {
   constructor(props) {
@@ -30,7 +31,7 @@ class Notes extends React.Component {
     let clonedColors = JSON.parse(JSON.stringify(colors));
     let loadNotes = handleLocalStorage([]);
 
-    this.state = { "notes": loadNotes, "colors": clonedColors, "active": 0 }
+    this.state = { notes: loadNotes, colors: clonedColors, active: 0 }
 
     this.add = this.add.bind(this);
     this.call = this.call.bind(this);
@@ -87,11 +88,16 @@ class Notes extends React.Component {
   * Responsible for adding a template for new note.
   */
   add() {
+    let newNote = {};
+    // To find out the max Id value of existing notes
+    if (Array.isArray(this.state.notes) && this.state.notes.length) {
+      let maxId = Math.max.apply(Math,this.state.notes.map(function(o){return o.id;}));
+      let maxOrder = Math.max.apply(Math,this.state.notes.map(function(o){return o.order;}));
+      newNote = noteTemplate(maxId+1, maxOrder+1);
+    } else {
+      newNote = noteTemplate(1, 1);
+    }
 
-    let id = 1;
-    if (this.state.notes) id = this.state.notes.length + 1;
-
-    let newNote = noteTemplate(id);
     let clonedNotes = parseNotes(this.state.notes);
 
     clonedNotes.push(newNote);
@@ -125,7 +131,7 @@ class Notes extends React.Component {
     let notes = parseNotes(this.state.notes);
     notes = calcOrder(direction, order, notes);
     notes = handleLocalStorage(notes);
-    this.setState({ notes: notes });
+    this.setState({ notes: notes, active: 0 });
   }
 
   onSubmit(note) {
@@ -140,7 +146,7 @@ class Notes extends React.Component {
       }
     }
     clonedNotes = handleLocalStorage(clonedNotes);
-    this.setState({ notes: clonedNotes });
+    this.setState({ notes: clonedNotes, active: 0 });
   }
 
   delete(id) {
@@ -150,7 +156,7 @@ class Notes extends React.Component {
       for (let i = 0; i < clonedNotes.length; i++) {
         if (clonedNotes[i].id === id) {
           clonedNotes.splice(i, 1);
-          handleLocalStorage.removeItem(id);
+          localStorage.removeItem(id);
         }
       }
 
@@ -167,7 +173,7 @@ class Notes extends React.Component {
     for (let note of notes) {
       renderNotes.push(<Note changeOrder={this.order} delete={this.delete} colors={this.state.colors}
         order={note.order} id={note.id} title={note.title} call={this.call} onSubmit={this.onSubmit} text={note.text} color={note.color}
-        top={note.top} left={note.left} key={1000 * Math.random()} />);
+        top={note.top} left={note.left} key={note.id} />);
     }
 
     return (

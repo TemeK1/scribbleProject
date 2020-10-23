@@ -1,5 +1,5 @@
 /*
-* Parsing all the notes for further use.
+* Parsing all notes for further use.
 */
 export function parseNotes(stateNotes) {
   let notes = [];

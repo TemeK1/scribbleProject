@@ -23,9 +23,8 @@ body {
 
 .Text {
   font-size: 16px;
-  padding: 0 6%;
   min-height: 80px;
-  padding: 1% 10% 2% 10%;
+  padding: 2% 2%;
   white-space: pre-wrap;
 }
 
@@ -83,6 +82,11 @@ body {
 
   #title {
     width: 90%;
+    margin: 2% 0;
+  }
+
+  .Text {
+    padding: 1% 5% 2% 5%;
   }
 
   #flex {
@@ -213,7 +217,7 @@ body {
   text-align: center;
   align-content: center;
   width: 25vw;
-  margin: 0 auto;
+  margin: 2% auto;
   padding: 0.5%;
 }
 
@@ -228,7 +232,7 @@ body {
 }
 
 .aboutLayer p {
-  margin: 1vw 3vw 1vw 3vw;
+  margin: 2vw 3vw 1vw 3vw;
 }
 
 .aboutLayer p.address {
