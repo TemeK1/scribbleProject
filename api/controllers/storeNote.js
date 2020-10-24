@@ -3,7 +3,7 @@ const Note = require('../models/Note.js');
 module.exports =  async (req,res) => {
   try {
     const note = await Note.create({
-      id: req.params.id,
+      time: req.params.time,
       order: req.params.order,
       title: req.params.title,
       text: req.params.text,

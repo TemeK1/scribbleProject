@@ -3,7 +3,7 @@ const Note = require('../models/Note.js');
 module.exports =  async (req,res) => {
   try {
     const note = await Note.deleteOne({
-      id: req.params.id
+      time: req.params.time
     });
     res.json({ note: note });
   } catch (error) {

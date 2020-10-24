@@ -4,6 +4,14 @@
 * @param order in what order the note is supposed to be displayed
 * @return object note
 */
-export function noteTemplate(id, order) {
-  return {"id": id, "order": order, "title": "sample titleX", "text": "sample textX", "left": "25%", "top": "25%", "color": "#AFD5AA", "time": new Date()};
+export function noteTemplate(time, order, color, joke) {
+  return {
+    time: time,
+    order: order,
+    title: "sample titleX",
+    text: joke,
+    left: Math.floor(Math.random() * 70),
+    top: 10 + Math.floor(Math.random() * 50),
+    color: color
+  }
 }

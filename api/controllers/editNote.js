@@ -2,7 +2,7 @@ const Note = require('../models/Note.js');
 
 module.exports = async (req,res) => {
   try {
-    const query = { id: req.params.id  };
+    const query = { time: req.params.time  };
     const notes = await Note.findOneAndUpdate(query, {
       order: req.params.order,
       title: req.params.title,

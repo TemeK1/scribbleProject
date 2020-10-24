@@ -12,44 +12,43 @@ export function handleLocalStorage(loadNotes) {
     return this.setItem(key,(obj));
   }
 
+  for (let n of loadNotes) {
+    localStorage.setObj(n.time, JSON.stringify({
+        time: n.time,
+        order: n.order,
+        title: n.title,
+        text: n.text,
+        left: n.left,
+        top: n.top,
+        color: n.color,
+        time: n.time}));
+  }
 
-    for (let n of loadNotes) {
-      localStorage.setObj(n.id, JSON.stringify({
-        "id": n.id,
-        "order": n.order,
-        "title": n.title,
-        "text": n.text,
-        "left": n.left,
-        "top": n.top,
-        "color": n.color,
-        "time": n.time}));
-    }
+  for (let i = 0; i < localStorage.length; i++) {
+    let obj = localStorage.getObj(localStorage.key(i));
 
-    for (let i = 0; i < localStorage.length; i++) {
-      let obj = localStorage.getObj(localStorage.key(i));
-
-      if (isNaN(obj.id) === false) {
+    if (isNaN(obj.time) === false) {
         loadNotes.push({
-          "id":obj.id,
-          "order": obj.order,
-          "title": obj.title,
-          "text": obj.text,
-          "left": obj.left,
-          "top": obj.top,
-          "color": obj.color,
-          "time": obj.time
+          time: obj.time,
+          order: obj.order,
+          title: obj.title,
+          text: obj.text,
+          left: obj.left,
+          top: obj.top,
+          color: obj.color,
+          time: obj.time
         });
+    }
+  }
+
+  for (let i = 0; i < loadNotes.length; i++) {
+    for (let j = loadNotes.length -1; j > i; j--) {
+      if (loadNotes[i].time === loadNotes[j].time) {
+        loadNotes.splice(j, 1);
       }
     }
+  }
 
-    for (let i = 0; i < loadNotes.length; i++) {
-      for (let j = loadNotes.length -1; j > i; j--) {
-        if (loadNotes[i].id === loadNotes[j].id) {
-          loadNotes.splice(j, 1);
-        }
-      }
-    }
-
-    return loadNotes;
+  return loadNotes;
 
 }

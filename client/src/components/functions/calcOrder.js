@@ -2,7 +2,6 @@
 *
 */
 export function calcOrder(direction, order, notes) {
-  console.log(notes);
 
   if (direction == 1) {
     for (let i = notes.length -1; i > 0; i--) {
@@ -21,8 +20,6 @@ export function calcOrder(direction, order, notes) {
       }
     }
   }
-
-    console.log(notes);
 
   return notes;
 }

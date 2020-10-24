@@ -1,26 +1,26 @@
 export var colors = [
   {
     // Thistle
-    "color": "#E0BBE4"
+    "color": "E0BBE4"
   },
   {
     // Lavender Purple
-    "color": "#957DAD"
+    "color": "957DAD"
   },
   {
     // Light Moss Green
-    "color": "#AFD5AA"
+    "color": "AFD5AA"
   },
   {
     // Pearl Aqua
-    "color": "#87DCC0"
+    "color": "87DCC0"
   },
   {
     // Dark Sky Blue
-    "color": "#83C6DD"
+    "color": "83C6DD"
   },
   {
     // Cerulean Frost
-    "color": "#6891C3"
+    "color": "6891C3"
   }
 ]

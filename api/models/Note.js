@@ -10,28 +10,29 @@ const NoteSchema = new Schema({
         type: String,
         required: [true, "Please provide text"]
     },
-    id: {
-      type: Number,
-      required: true,
-      unique: true
-    },
     order: {
       type: Number,
       required: true
+    },
+    // time created in ms. since 1970
+    time: {
+      type: Number,
+      required: true,
+      unique: true
     },
     color: {
         type: String,
         required: [true, "Please provide color code"]
     },
     left: {
-      type: String,
+      type: Number,
       required: true
     },
     top: {
-      type: String,
+      type: Number,
       required: true
     },
-    time: {
+    lastEdited: {
       type: Date,
       default: new Date()
     },

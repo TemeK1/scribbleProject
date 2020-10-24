@@ -40,15 +40,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.get('/notes', searchController);
-app.get('/notes/edit/:id/:order/:title/:text/:left/:top/:color', cleanInput, editNoteController);
-app.get('/notes/write/:id/:order/:title/:text/:left/:top/:color', cleanInput, storeNoteController);
-app.get('/notes/delete/:id', deleteNoteController);
+app.get('/notes/edit/:time/:order/:title/:text/:left/:top/:color', cleanInput, editNoteController);
+app.get('/notes/write/:time/:order/:title/:text/:left/:top/:color', cleanInput, storeNoteController);
+app.get('/notes/delete/:time', deleteNoteController);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });
-
 
 // error handler
 app.use(function(err, req, res, next) {
