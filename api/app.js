@@ -9,8 +9,6 @@ mongoose.connect(process.env.APP_DATABASE_URL, {useNewUrlParser:true, useUnified
 mongoose.set('useFindAndModify', false);
 var sanitize = require("mongo-sanitize");
 
-
-
 const app = new express();
 var path = require('path');
 var cookieParser = require('cookie-parser');
@@ -19,7 +17,6 @@ var cors = require("cors");
 
 var indexRouter = require('./routes/index');
 const searchController = require('./controllers/fetchNotes');
-const editNoteController = require('./controllers/editNote');
 const storeNoteController = require('./controllers/storeNote');
 const deleteNoteController = require('./controllers/deleteNote');
 
@@ -40,8 +37,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.get('/notes', searchController);
-app.get('/notes/edit/:time/:order/:title/:text/:left/:top/:color', cleanInput, editNoteController);
-app.get('/notes/write/:time/:order/:title/:text/:left/:top/:color', cleanInput, storeNoteController);
+app.post('/notes/write/', cleanInput, storeNoteController);
 app.get('/notes/delete/:time', deleteNoteController);
 
 // catch 404 and forward to error handler

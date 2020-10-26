@@ -1,18 +1,20 @@
 const Note = require('../models/Note.js');
 
 module.exports =  async (req,res) => {
+
   try {
-    const note = await Note.create({
-      time: req.params.time,
-      order: req.params.order,
-      title: req.params.title,
-      text: req.params.text,
-      left: req.params.left,
-      top: req.params.top,
-      color: req.params.color
+    const query = { time: req.body.time  },
+          update = {
+            ...req.body,
+          },
+          options = { upsert: true };
+    const notes = await Note.findOneAndUpdate(query, update, options);
+    res.json({
+        notes: notes
     });
-    res.json({ note: note });
   } catch (error) {
-    res.json({ status: "Query was not successful. Most likely Note was a duplicate entry and therefore it got denied."});
+    res.json({ status: error });
   }
 }
+
+//'Some error occurred while handling the query. Maybe try again in a bit?'

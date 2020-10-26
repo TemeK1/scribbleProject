@@ -107,7 +107,7 @@ class Note extends React.Component {
           checked = true;
         }
 
-        color.push(<div className="radioColor" key={c.color} id={c.color} style={{backgroundColor: c.color}}><input type="radio" name="color" checked={checked} value={c.color} onChange={() => {this.setState({color: c.color})}} /></div>);
+        color.push(<div className="radioColor" key={c.color} id={c.color} style={{backgroundColor: '#' + c.color}}><input type="radio" name="color" checked={checked} value={c.color} onChange={() => {this.setState({color: c.color})}} /></div>);
       }
     }
 

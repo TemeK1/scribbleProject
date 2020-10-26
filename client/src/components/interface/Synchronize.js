@@ -12,7 +12,7 @@ class Synchronize extends React.Component {
   }
 
   render() {
-    return this.state.showResult ? <div className="response">{this.state.queryStatus}</div> : <div className="response"></div>;
+    return this.state.showResult ? <div className="response"></div> : <div className="response"></div>;
 
   }
 

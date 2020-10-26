@@ -35,8 +35,7 @@ const NoteSchema = new Schema({
     lastEdited: {
       type: Date,
       default: new Date()
-    },
-
+    }
 });
 
 const Note = mongoose.model('Note', NoteSchema);

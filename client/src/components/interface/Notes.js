@@ -22,7 +22,6 @@ import synchronizeNotes from '../../assets/images/synchronizeNotes.png';
 // API Constants
 const API = "http://localhost:9000/notes";
 const WRITE = "/write/";
-const EDIT = "/edit/";
 const DELETE = "/delete/";
 const JOKE = 'https://sv443.net/jokeapi/v2/joke/Any?blacklistFlags=nsfw,religious,political,racist,sexist&type=single';
 
@@ -64,15 +63,26 @@ class Notes extends React.Component {
   }
 
   synchronize() {
-    this.syncNotes();
-    return;
+    this.syncUpload();
+    this.syncDownload();
+  }
+
+  syncDownload() {
     try {
       let clonedNotes = [...this.state.notes];
       fetch(API)
       .then(response => response.json())
       .then(data => data.notes.map(item => {
-        if (!clonedNotes.filter({ time: item.time })) {
-          clonedNotes.push(item);
+        if (!clonedNotes.find(function (x) {return x.time == item.time })) {
+          clonedNotes.push({
+            time: item.time,
+            order: item.order,
+            top: item.top,
+            left: item.left,
+            color: item.color,
+            title: item.title,
+            text: item.text
+          });
         }
       }))
       .then(this.setState({notes: clonedNotes}, function () {
@@ -82,32 +92,36 @@ class Notes extends React.Component {
    } catch (error) {
      console.log(error);
    }
+  }
+
+  syncUpload() {
+    try {
+      for (let note of this.state.notes) {
+        console.log(note);
+        let requestOptions = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ time: note.time, left: note.left, top: note.top, title: note.title, text: note.text, color: note.color, order: note.order })
+        };
+
+        fetch(API + WRITE, requestOptions)
+        .then(response => response.json())
+        .then(data => console.log(data));
+      }
+    } catch (error) {
+      console.log(error);
+    }
 
   }
 
-  syncNotes() {
-    for (let note of this.state.notes) {
-      const URL = API + WRITE + note.time + '/' + note.order + '/' + note.title + '/' + note.text + '/' +  note.left + '/' + note.top + '/' + note.color;
-      console.log(URL);      
-    }
-
-    return;
+  syncDelete(time) {
     try {
-      let clonedNotes = [...this.state.notes];
-      fetch(API + WRITE)
+      fetch(API + DELETE + time)
       .then(response => response.json())
-      .then(data => data.notes.map(item => {
-        if (!clonedNotes.filter({ time: item.time })) {
-          clonedNotes.push(item);
-        }
-      }))
-      .then(this.setState({notes: clonedNotes}, function () {
-          this.updateItem(this.state);
-      }.bind(this)));
-
-   } catch (error) {
-     console.log(error);
-   }
+      .then(data => console.log(data));
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   //käytännössä varmistetaan, että tila varmasti on saatu tallennettua
@@ -180,7 +194,6 @@ class Notes extends React.Component {
   onDrop(e) {
     e.preventDefault();
     let order = parseInt(e.dataTransfer.getData("text/plain"));
-    console.log(order);
     let clonedNotes = [...this.state.notes];
     clonedNotes = calcPosition(clonedNotes, e.clientX, e.clientY, order);
     clonedNotes = handleLocalStorage(clonedNotes);
@@ -217,8 +230,9 @@ class Notes extends React.Component {
       let clonedNotes = [...this.state.notes];
       for (let i = 0; i < clonedNotes.length; i++) {
         if (clonedNotes[i].order === order) {
+          this.syncDelete(clonedNotes[i].time);
+          localStorage.removeItem(clonedNotes[i].time);
           clonedNotes.splice(i, 1);
-          localStorage.removeItem(order);
         }
       }
 
@@ -243,7 +257,7 @@ class Notes extends React.Component {
       <div className="headerRow">
         <div id="logo"><img src={scribbleSquare} alt="Cancel" width="48" height="48" /> <h1>Scribble 2000</h1></div>
         <input type="image" src={addNote} className="add" title="Add new Note" width="48" height="48" alt="Add Note" onClick={this.add}></input>
-        <input type="image" src={synchronizeNotes} className="synchronize" width="48" height="48" alt="Synchronize notes with database" title="Synchronize" onClick={this.synchronize}></input>
+        <input type="image" src={synchronizeNotes} className="synchronize" width="48" height="48" alt="Synchronize notes with database" title="Synchronize notes with database " onClick={this.synchronize}></input>
         <Synchronize API={this.API} SEND={this.SEND} />
       </div>
       <div id="flex">{renderNotes}</div>
