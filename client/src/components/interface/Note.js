@@ -5,6 +5,9 @@ import cancelNote from '../../assets/images/cancelNote.png';
 import editNote from '../../assets/images/editNote.png';
 import removeNote from '../../assets/images/removeNote.png';
 
+/*
+* Component for individual Notes.
+*/
 class Note extends React.Component {
   constructor(props) {
     super(props);
@@ -15,14 +18,7 @@ class Note extends React.Component {
         order = JSON.parse(JSON.stringify(this.props.order)),
         time = JSON.parse(JSON.stringify(this.props.time));
 
-    this.state = {
-      active: false,
-      time: time,
-      order: order,
-      title: title,
-      text: text,
-      color: color
-    }
+    this.state = { active: false, time: time, order: order, title: title, text: text, color: color }
 
     this.changeOrder = this.changeOrder.bind(this);
     this.click = this.click.bind(this);
@@ -33,18 +29,26 @@ class Note extends React.Component {
     this.setActivity = this.setActivity.bind(this);
   }
 
+  /*
+  * To "activate" this Note to receive User Input.
+  */
   click() {
-    //this.props.call(this.props.id, this.setActivity);
     if (!this.state.active) this.setState({active:true});
   }
 
+  /*
+  * This is used when a small arrow is clicked to swap the position of this note.
+  */
   changeOrder(e) {
     e.stopPropagation();
     this.props.changeOrder(parseInt(e.target.getAttribute('value')), this.props.order);
   }
 
+  /*
+  * To swap between TWO states of this note's visibility.
+  * It's either visible or not.
+  */
   setActivity() {
-
     if (this.state.active === false) {
       this.setState({active:true});
     } else {
@@ -52,28 +56,31 @@ class Note extends React.Component {
     }
   }
 
+  /*
+  * This is used when the trashcan is clicked.
+  * To remove note.
+  * Calls to callback function of Notes Component.
+  */
   delete(e) {
     e.stopPropagation();
     this.props.delete(this.props.order);
   }
 
-
+  /*
+  * To prehandle and prevalidate edits of this specific Note.
+  * More decent validation will occur in API ENDPOINT.
+  */
   handleChange(e) {
-    let obj = e.target;
-    let field = obj.name;
-    let value = obj.value;
-    let type = obj.type;
-    let newstate = {};
+    let obj = e.target,
+        field = obj.name,
+        value = obj.value,
+        type = obj.type,
+        newstate = {};
 
-    if (type === 'radio') {
-      newstate.color = value;
-      this.setState(newstate);
-      return;
-    }
-
+    // To validate text and title fields.
     if (type === 'text' || obj.id === "text") {
-      if (value.trim().length < 2) {
-        obj.setCustomValidity("Too short, at least two characters are required");
+      if (value.trim().length < 3) {
+        obj.setCustomValidity("Too short, at least three characters are required");
       } else {
         obj.setCustomValidity("");
       }
@@ -86,6 +93,11 @@ class Note extends React.Component {
     this.setState(newstate);
   }
 
+  /*
+  * When the form is submitted, we will use
+  * callback function onSubmit here. Notes Component
+  * will take care of the rest.
+  */
   handleSubmit(e) {
     e.preventDefault();
     let note = JSON.parse(JSON.stringify({title: this.state.title, order: this.state.order, time: this.state.time, text: this.state.text, color: this.state.color}));
@@ -93,6 +105,9 @@ class Note extends React.Component {
     this.setActivity();
   }
 
+  /*
+  * To transport an order value of dragged Note via dataTransfer.
+  */
   onDragStart(e) {
     e.dataTransfer.setData("text/plain", e.target.getAttribute("order"));
   }
@@ -101,6 +116,7 @@ class Note extends React.Component {
     let color = [];
 
     if (this.state.active) {
+      // Color options will only be displayed when this note is active.
       for (let c of this.props.colors) {
         let checked = false;
         if (this.state.color === c.color) {
@@ -110,8 +126,9 @@ class Note extends React.Component {
         color.push(<div className="radioColor" key={c.color} id={c.color} style={{backgroundColor: '#' + c.color}}><input type="radio" name="color" checked={checked} value={c.color} onChange={() => {this.setState({color: c.color})}} /></div>);
       }
     }
-
+    let noteClass = this.state.active ? "Note NoteActive" : "Note";
     let content = this.state.active ?
+    // This will be rendered if the note is active
     <div>
     <form className="Edit" onSubmit={this.handleSubmit}>
     <div className="noteOptions">
@@ -124,6 +141,7 @@ class Note extends React.Component {
     <div className="colors">{color}</div>
     </form>
     </div>:
+    // This will be rendered if the note is not active
     <div className="nonActive">
     <div className="Title">{this.props.title}</div><div className="Text">{this.props.text}</div>
     <div className="arrows">
@@ -133,12 +151,11 @@ class Note extends React.Component {
     </div>;
 
     return (
-      <div id={this.props.time} order={this.props.order} draggable="true" className="Note" style={{backgroundColor: '#' + this.state.color, top: this.props.top + '%', left: this.props.left + '%', order: this.props.order}}
+      <div id={this.props.time} order={this.props.order} draggable="true" className={noteClass} style={{backgroundColor: '#' + this.state.color, top: this.props.top + '%', left: this.props.left + '%', order: this.props.order}}
        onDragStart={this.onDragStart} onClick={this.click}>
       {content}
       </div>);
   }
-
 }
 
 export default Note;

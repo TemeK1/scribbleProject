@@ -118,6 +118,10 @@ body {
   padding: 1% 1% 1% 1%;
 }
 
+.NoteActive {
+  z-index: 999;
+}
+
 .Full {
   width: 100vw;
   height: 100vh;

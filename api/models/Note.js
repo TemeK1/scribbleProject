@@ -12,7 +12,8 @@ const NoteSchema = new Schema({
     },
     order: {
       type: Number,
-      required: true
+      required: true,
+      unique: true
     },
     // time created in ms. since 1970
     time: {
@@ -33,8 +34,8 @@ const NoteSchema = new Schema({
       required: true
     },
     lastEdited: {
-      type: Date,
-      default: new Date()
+      type: Number,
+      required: true
     }
 });
 

@@ -1,5 +1,7 @@
 /*
 * Sorting all notes based on their order attribute
+* @notes array of Note objects
+* @return array of Note objects in descending order.
 */
 export function sortNotes(notes) {
 
