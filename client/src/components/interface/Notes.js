@@ -1,5 +1,6 @@
 import React from 'react';
 import Note from './Note.js';
+import Synchronize from './Synchronize.js';
 
 // Import Functions
 import {sortNotes} from '../functions/sortNotes.js';
@@ -13,9 +14,7 @@ import {colors} from '../../assets/colors/color.js';
 
 // Import Images
 import scribbleSquare from '../../assets/images/scribbleSquare.png';
-import addNote from '../../assets/images/addNote.png';
-import synchronizeNotes from '../../assets/images/synchronizeNotes.png';
-
+import addNote from '../../assets/images/addNote.png'
 
 // API Constants
 const API = "http://localhost:9000/notes"; // Base address...
@@ -35,7 +34,7 @@ class Notes extends React.Component {
     let clonedColors = JSON.parse(JSON.stringify(colors));
     let loadNotes = handleLocalStorage([]);
 
-    this.state = { notes: loadNotes, colors: clonedColors, active: 0 }
+    this.state = { notes: loadNotes, colors: clonedColors, executeSync: false }
 
     this.addNew = this.addNew.bind(this);
     this.dragOver = this.dragOver.bind(this);
@@ -59,79 +58,18 @@ class Notes extends React.Component {
   * Here we call two functions to synchronize notes between the client and endpoint.
   */
   synchronize() {
-    this.syncDownload();
-    this.syncUpload();
-  }
+    this.setState({
+      executeSync: true
+    });
+    return;
+    //let clonedNotes = syncDownload(API, [...this.state.notes]);
+    //this.setState({
+      //notes: clonedNotes
+    //}, function() {
+    //  this.updateItem(this.state);
+    //}.bind(this));
 
-  /*
-  * To make sure that all the notes are downloaded (fetched) from the endpoint.
-  */
-  syncDownload() {
-    try {
-      let maximumOrder = 1;
-      let clonedNotes = [...this.state.notes];
-
-      fetch(API)
-      .then(response => response.json())
-      .then(data => data.notes.map(item => {
-        if (!clonedNotes.find(function (note) { return note.time === item.time })) {
-          clonedNotes.push({
-            time: item.time,
-            lastEdited: item.lastEdited,
-            order: maximumOrder,
-            top: item.top,
-            left: item.left,
-            color: item.color,
-            title: item.title,
-            text: item.text
-          });
-
-        } else {
-          let note = clonedNotes.find(function (note) { return note.time === item.time });
-          if (item.lastEdited > note.lastEdited) {
-            note.title = item.title;
-            note.text = item.text;
-            note.color = item.color;
-            note.left = item.left;
-            note.top = item.top;
-            note.order = maximumOrder;
-            note.time = item.time;
-            note.lastEdited = item.lastEdited;
-          }
-        }
-        maximumOrder++;
-      }))
-      .then(this.setState({notes: clonedNotes}, function () {
-          this.updateItem(this.state);
-      }.bind(this)));
-
-   } catch (error) {
-     console.log(error);
-   }
-  }
-
-  /*
-  * To make sure that all the notes are uploaded (fetch, method: 'POST') to the endpoint.
-  * One by one.
-  */
-  syncUpload() {
-    try {
-      let editTime = new Date().getTime();
-      for (let note of this.state.notes) {
-        let requestOptions = {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ time: note.time, lastEdited: editTime, left: note.left, top: note.top, title: note.title, text: note.text, color: note.color, order: note.order })
-        };
-
-        fetch(API + WRITE, requestOptions)
-        .then(response => response.json())
-        .then(data => console.log(data));
-      }
-    } catch (error) {
-      console.log(error);
-    }
-
+    //syncUpload(API, WRITE, clonedNotes);
   }
 
   /*
@@ -259,7 +197,7 @@ class Notes extends React.Component {
     let clonedNotes = [...this.state.notes];
 
     for (let n of clonedNotes) {
-      if (n.order === note.order) {
+      if (n.time === note.time) {
         n.text = note.text;
         n.title = note.title;
         n.color = note.color;
@@ -311,7 +249,7 @@ class Notes extends React.Component {
       <div className="headerRow">
         <div id="logo"><img src={scribbleSquare} alt="Cancel" width="48" height="48" /> <h1>Scribble 2000</h1></div>
         <input type="image" src={addNote} className="add" title="Add new Note" width="48" height="48" alt="Add Note" onClick={this.addNew}></input>
-        <input type="image" src={synchronizeNotes} className="synchronize" width="48" height="48" alt="Synchronize notes with database" title="Synchronize notes with database " onClick={this.synchronize}></input>
+        <Synchronize api={API} write={WRITE} notes={this.state.notes} />
       </div>
       <div id="flex">{renderNotes}</div>
       </div>);
