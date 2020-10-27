@@ -14,7 +14,7 @@ class About extends React.Component {
       creator: '-Teemu "TemeKK1" Käpylä',
       text: "Thank you for using Scribble 2000. It is very simple, but yet, powerful application for scribbling notes that add some spice and color on your life.",
       text2: "If you have ideas, suggestions, feedback or whatsoever, feel free to contact me via email. Copyright for pictures belongs to Arjane. Feel free to check her blog.",
-      email: 'contact@teemukapyla.fi',
+      email: 'contact@teemukapyla.dev',
       website: 'https://www.teemukapyla.fi',
       reveal: false,
       graphics: "https://www.arjane.blog"

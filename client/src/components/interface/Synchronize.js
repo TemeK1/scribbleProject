@@ -78,7 +78,7 @@ class Synchronize extends React.Component {
 
     }
 
-    let message = renderNotes.length ? "WARNING! Some of the remote content has been edited more recently than your local notes. If you confirm to remotely sync messages, you will lose some remote content (a text with red background). Press 'OK' to proceed, and 'Cancel' to keep remote edits (YOU WILL LOSE LOCAL VERSION = GREEN ONES). This action is irreversible." : "asd";
+    let message = renderNotes.length ? "WARNING! Some of the remote content might have been edited more recently than your local notes. If you confirm to sync Notes between the browser and the endpoint database, you will lose some remote content (a text with red background). Press 'Keep local Notes' to proceed to syncronize and to upload all the notes to the database, OR 'Keep remote Notes' to keep the most recent remote edits (YOU WILL LOSE OLDER LOCAL GREEN ONES). This action is irreversible. Keep on mind that everything else will be syncronized in such a way that all the notes can be similarly found both from the client and database." : "asd";
 
     // We render this if the content is visible.
     let content = this.state.reveal ?
@@ -93,7 +93,7 @@ class Synchronize extends React.Component {
     {renderNotes}
     </tbody>
     </table>
-    <div style={{ marginLeft: "2vw"}}>{message}</div>
+    <div style={{ marginLeft: "2vw", marginRight: "2vw"}}>{message}</div>
     </div></div> :
     // And this if the content is not visible.
     <div><input type="image" src={synchronizeNotes} className="synchronize" width="48" height="48" alt="Synchronize notes with database" title="Synchronize notes with database" onClick={this.synchronize}></input></div>;
