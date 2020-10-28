@@ -1,11 +1,11 @@
 /*
 *
 */
-export function syncDownload(API, clonedNotes) {
+export async function syncDownload(API, clonedNotes) {
   try {
     let maximumOrder = 1;
 
-    fetch(API)
+    await fetch(API)
       .then(response => response.json())
       .then(data => data.notes.map(item => {
         if (!clonedNotes.find(function(note) {
@@ -30,7 +30,7 @@ export function syncDownload(API, clonedNotes) {
           let note = clonedNotes.find(function(note) {
             return note.time === item.time
           })
-
+  
           if (item.lastEdited > note.lastEdited) {
             note.titleRemote = item.title;
             note.textRemote = item.text;
@@ -42,11 +42,14 @@ export function syncDownload(API, clonedNotes) {
             note.lastEditedRemote = item.lastEdited;
             // Note was edited remotely more recently than locally
             note.warning = true;
+            window.confirm("mismatch detected");
+          } else {
+            note.warning = false;
+            note.order = maximumOrder;
           }
         }
         maximumOrder++
       }));
-
 
   } catch (error) {
     console.log(error);

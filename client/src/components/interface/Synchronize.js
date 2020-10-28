@@ -28,13 +28,14 @@ class Synchronize extends React.Component {
   /*
   * Here we call two functions to synchronize notes between the client and endpoint.
   */
-  synchronize() {
+  async synchronize() {
     let uploadNotes = true;
     this.swap();
-    let clonedNotes = syncDownload(this.props.api, [...this.state.notes]);
+    let clonedNotes = await syncDownload(this.props.api, [...this.state.notes]);
     for (let note of clonedNotes) {
       if (note.warning === true) {
         uploadNotes = false;
+        //this.props.notesVisibility(false);
         break;
       }
     }
@@ -45,7 +46,8 @@ class Synchronize extends React.Component {
       this.updateItem(this.state);
     }.bind(this));
 
-    if (uploadNotes) {
+    if (uploadNotes === true) {
+      console.log("addsdsaadsdsadsa");
       this.upload(1);
     }
 
@@ -78,9 +80,15 @@ class Synchronize extends React.Component {
   */
   swap() {
     if (this.state.reveal === false) {
-      this.setState({reveal: true});
+      this.setState({reveal: true},
+        function() {
+        this.updateItem(this.state);
+        }.bind(this));
     } else {
-      this.setState({reveal: false});
+      this.setState({reveal: false},
+        function() {
+        this.updateItem(this.state);
+        }.bind(this));
     }
 
   }
@@ -111,7 +119,7 @@ class Synchronize extends React.Component {
     // We render this if the content is visible.
     let content = this.state.reveal && warningCount > 0 ?
     <div>
-    <div><input type="image" src={synchronizeNotes} className="synchronize" width="48" height="48" alt="Synchronize notes with database" title="Synchronize notes with database" onClick={this.synchronize}></input></div>
+    <div><input type="image" src={synchronizeNotes} className="synchronize" width="48" height="48" alt="Synchronize notes with database" title="Synchronize notes with database" onClick={() => this.synchronize()}></input></div>
     <div className="aboutLayer">
     <h2>Remote database contains more recent edits!</h2>
     <table>
@@ -130,7 +138,7 @@ class Synchronize extends React.Component {
     </div>
     </div> :
     // And this if the content is not visible.
-    <div><input type="image" src={synchronizeNotes} className="synchronize" width="48" height="48" alt="Synchronize notes with database" title="Synchronize notes with database" onClick={this.synchronize}></input></div>;
+    <div><input type="image" src={synchronizeNotes} className="synchronize" width="48" height="48" alt="Synchronize notes with database" title="Synchronize notes with database" onClick={() => this.synchronize()}></input></div>;
 
     return <div>{content}</div>;
   }

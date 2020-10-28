@@ -109,7 +109,7 @@ class Note extends React.Component {
   * To transport an order value of dragged Note via dataTransfer.
   */
   onDragStart(e) {
-    e.dataTransfer.setData("text/plain", e.target.getAttribute("order"));
+    e.dataTransfer.setData("text/plain", e.target.getAttribute("id"));
   }
 
   render() {

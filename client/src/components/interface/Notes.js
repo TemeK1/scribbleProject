@@ -34,16 +34,17 @@ class Notes extends React.Component {
     let clonedColors = JSON.parse(JSON.stringify(colors));
     let loadNotes = handleLocalStorage([]);
 
-    this.state = { notes: loadNotes, colors: clonedColors, executeSync: false }
+    this.state = { notes: loadNotes, colors: clonedColors, executeSync: false, hideNotes: false }
 
     this.addNew = this.addNew.bind(this);
-    this.updateNotes = this.updateNotes.bind(this);
+    this.delete = this.delete.bind(this);
     this.dragOver = this.dragOver.bind(this);
     this.fetchRandomColor = this.fetchRandomColor.bind(this);
+    this.notesVisibility = this.notesVisibility.bind(this);
     this.onDrop = this.onDrop.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.order = this.order.bind(this);
-    this.delete = this.delete.bind(this);
+    this.updateNotes = this.updateNotes.bind(this)
   }
 
   /*
@@ -123,6 +124,12 @@ class Notes extends React.Component {
     e.preventDefault();
   }
 
+  notesVisibility(visibility) {
+    this.setState({
+      hideNotes: visibility
+    });
+  }
+
   /*
   * Fetching random color from available colors options (this.state.colors)
   */
@@ -137,10 +144,10 @@ class Notes extends React.Component {
   onDrop(e) {
     e.preventDefault();
     // Order number of dragged note is parsed from dataTransfer.
-    let order = parseInt(e.dataTransfer.getData("text/plain"));
+    let time = parseInt(e.dataTransfer.getData("text/plain"));
     let clonedNotes = [...this.state.notes];
     // We call calcPosition to calculate an absolute top- and left position for dragged note
-    clonedNotes = calcPosition(clonedNotes, e.clientX, e.clientY, order);
+    clonedNotes = calcPosition(clonedNotes, e.clientX, e.clientY, time);
 
     // Make sure changes are stored...
     clonedNotes = handleLocalStorage(clonedNotes);
@@ -224,10 +231,12 @@ class Notes extends React.Component {
     let notes = [...this.state.notes];
     let renderNotes = [];
 
-    for (let note of notes) {
-      renderNotes.push(<Note changeOrder={this.order} delete={this.delete} colors={this.state.colors}
-        order={note.order} time={note.time} title={note.title} onSubmit={this.onSubmit} text={note.text} color={note.color}
-        top={note.top} left={note.left} key={note.time} />);
+    if (!this.state.hideNotes) {
+      for (let note of notes) {
+        renderNotes.push(<Note changeOrder={this.order} delete={this.delete} colors={this.state.colors}
+          order={note.order} time={note.time} title={note.title} onSubmit={this.onSubmit} text={note.text} color={note.color}
+          top={note.top} left={note.left} key={note.time} />);
+      }
     }
 
     return (
@@ -235,7 +244,7 @@ class Notes extends React.Component {
       <div className="headerRow">
         <div id="logo"><img src={scribbleSquare} alt="Cancel" width="48" height="48" /> <h1>Scribble 2000</h1></div>
         <input type="image" src={addNote} className="add" title="Add new Note" width="48" height="48" alt="Add Note" onClick={this.addNew}></input>
-        <Synchronize api={API} write={WRITE} notes={this.state.notes} updateNotes={this.updateNotes} />
+        <Synchronize api={API} write={WRITE} notes={this.state.notes} updateNotes={this.updateNotes} notesVisibility={this.notesVisibility} />
       </div>
       <div id="flex">{renderNotes}</div>
       </div>);
