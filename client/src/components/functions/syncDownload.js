@@ -11,6 +11,7 @@ export function syncDownload(API, clonedNotes) {
         if (!clonedNotes.find(function(note) {
             return note.time === item.time
           })) {
+
           clonedNotes.push({
             time: item.time,
             lastEdited: item.lastEdited,
@@ -29,6 +30,7 @@ export function syncDownload(API, clonedNotes) {
           let note = clonedNotes.find(function(note) {
             return note.time === item.time
           })
+
           if (item.lastEdited > note.lastEdited) {
             note.titleRemote = item.title;
             note.textRemote = item.text;
@@ -42,12 +44,13 @@ export function syncDownload(API, clonedNotes) {
             note.warning = true;
           }
         }
-        maximumOrder++;
+        maximumOrder++
       }));
 
-      return clonedNotes;
 
   } catch (error) {
     console.log(error);
   }
+
+  return clonedNotes;
 }

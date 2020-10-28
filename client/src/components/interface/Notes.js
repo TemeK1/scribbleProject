@@ -37,39 +37,13 @@ class Notes extends React.Component {
     this.state = { notes: loadNotes, colors: clonedColors, executeSync: false }
 
     this.addNew = this.addNew.bind(this);
+    this.updateNotes = this.updateNotes.bind(this);
     this.dragOver = this.dragOver.bind(this);
     this.fetchRandomColor = this.fetchRandomColor.bind(this);
     this.onDrop = this.onDrop.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.order = this.order.bind(this);
     this.delete = this.delete.bind(this);
-    this.synchronize = this.synchronize.bind(this);
-  }
-
-
-  /*
-  * Executed when component is mounted.
-  */
-  componentDidMount() {
-     this.synchronize();
-  }
-
-  /*
-  * Here we call two functions to synchronize notes between the client and endpoint.
-  */
-  synchronize() {
-    this.setState({
-      executeSync: true
-    });
-    return;
-    //let clonedNotes = syncDownload(API, [...this.state.notes]);
-    //this.setState({
-      //notes: clonedNotes
-    //}, function() {
-    //  this.updateItem(this.state);
-    //}.bind(this));
-
-    //syncUpload(API, WRITE, clonedNotes);
   }
 
   /*
@@ -207,7 +181,19 @@ class Notes extends React.Component {
 
     // To make sure changes are stored...
     clonedNotes = handleLocalStorage(clonedNotes);
-    this.setState({ notes: clonedNotes });
+    this.setState({ notes: clonedNotes },
+      function() {
+      this.updateItem(this.state);
+      }.bind(this));
+  }
+
+  updateNotes(notes) {
+
+    this.setState({ notes: notes, active: true },
+      function() {
+        this.updateItem(this.state);
+      }.bind(this));
+
   }
 
   /*
@@ -249,7 +235,7 @@ class Notes extends React.Component {
       <div className="headerRow">
         <div id="logo"><img src={scribbleSquare} alt="Cancel" width="48" height="48" /> <h1>Scribble 2000</h1></div>
         <input type="image" src={addNote} className="add" title="Add new Note" width="48" height="48" alt="Add Note" onClick={this.addNew}></input>
-        <Synchronize api={API} write={WRITE} notes={this.state.notes} />
+        <Synchronize api={API} write={WRITE} notes={this.state.notes} updateNotes={this.updateNotes} />
       </div>
       <div id="flex">{renderNotes}</div>
       </div>);
