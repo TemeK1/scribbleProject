@@ -1,7 +1,8 @@
 import React from 'react';
 
 /*
-* To compare two similar Notes, for user to decide if he wants to override remote notes.
+* To compare two similar Notes, for user to decide if he wants to override mismatching remote notes or not.
+* This does nothing else; just for visual aid.
 */
 
 class Comparison extends React.Component {

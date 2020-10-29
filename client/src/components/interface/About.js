@@ -3,7 +3,7 @@ import cancelNote from '../../assets/images/cancelNote.png';
 
 /*
 * Just a simple Component for rendering about
-* details of the App for the user to see.
+* details of the App for the end user to see.
 */
 
 class About extends React.Component {

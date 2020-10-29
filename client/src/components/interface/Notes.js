@@ -34,7 +34,11 @@ class Notes extends React.Component {
     let clonedColors = JSON.parse(JSON.stringify(colors));
     let loadNotes = handleLocalStorage([]);
 
-    this.state = { notes: loadNotes, colors: clonedColors, executeSync: false, hideNotes: false }
+    this.state = {
+      notes: loadNotes,
+      colors: clonedColors,
+      hideNotes: false
+    }
 
     this.addNew = this.addNew.bind(this);
     this.delete = this.delete.bind(this);
@@ -96,11 +100,14 @@ class Notes extends React.Component {
       newNote = noteTemplate(time.getTime(), 1, color, joke);
     }
 
-    // And update whatever needs to be updated.
+    // And update whatever needs to be updated (state, localStorage)
     let clonedNotes = [...this.state.notes];
     clonedNotes.push(newNote);
     clonedNotes = handleLocalStorage(clonedNotes);
-    this.setState({ notes: clonedNotes });
+    this.setState({ notes: clonedNotes },
+      function() {
+      this.updateItem(this.state);
+      }.bind(this));
   }
 
   /*
@@ -124,6 +131,10 @@ class Notes extends React.Component {
     e.preventDefault();
   }
 
+  /*
+  * Callback function (used from Synchronize Component)
+  * Just to indicate if Notes should be rendered at the moment or not.
+  */
   notesVisibility(visibility) {
     this.setState({
       hideNotes: visibility
@@ -161,7 +172,7 @@ class Notes extends React.Component {
   */
   order(direction, order) {
     // First we sort notes to make absolutely sure they are in Descending order.
-    let notes = sortNotes([...this.state.notes]);
+    let notes = sortNotes([...this.state.notes], false);
     // Then we swap positions of two notes.
     notes = calcOrder(direction, order, notes);
 
@@ -194,8 +205,13 @@ class Notes extends React.Component {
       }.bind(this));
   }
 
+  /*
+  * Callback function (used from Synchronize Component)
+  * Makes sure that the after the syncronization
+  * edits are mirrored to the component's state and localStorage.
+  */
   updateNotes(notes) {
-
+    notes = handleLocalStorage(notes);
     this.setState({ notes: notes, active: true },
       function() {
         this.updateItem(this.state);

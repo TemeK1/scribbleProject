@@ -10,5 +10,6 @@ export function sortNotes(notes) {
     if (a.order > b.order) return -1;
     return 0;
   });
+
   return notes;
 }

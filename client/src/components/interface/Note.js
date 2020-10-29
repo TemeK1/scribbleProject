@@ -18,7 +18,14 @@ class Note extends React.Component {
         order = JSON.parse(JSON.stringify(this.props.order)),
         time = JSON.parse(JSON.stringify(this.props.time));
 
-    this.state = { active: false, time: time, order: order, title: title, text: text, color: color }
+    this.state = {
+      active: false,
+      time: time,
+      order: order,
+      title: title,
+      text: text,
+      color: color
+    }
 
     this.changeOrder = this.changeOrder.bind(this);
     this.click = this.click.bind(this);
@@ -49,11 +56,7 @@ class Note extends React.Component {
   * It's either visible or not.
   */
   setActivity() {
-    if (this.state.active === false) {
-      this.setState({active:true});
-    } else {
-      this.setState({active:false});
-    }
+    this.setState({active: !this.state.active});
   }
 
   /*
@@ -128,7 +131,7 @@ class Note extends React.Component {
     }
     let noteClass = this.state.active ? "Note NoteActive" : "Note";
     let content = this.state.active ?
-    // This will be rendered if the note is active
+    // This editable version will be rendered if the note is active
     <div>
     <form className="Edit" onSubmit={this.handleSubmit}>
     <div className="noteOptions">
@@ -141,7 +144,7 @@ class Note extends React.Component {
     <div className="colors">{color}</div>
     </form>
     </div>:
-    // This will be rendered if the note is not active
+    // This non-editable version will be rendered if the note is not active
     <div className="nonActive">
     <div className="Title">{this.props.title}</div><div className="Text">{this.props.text}</div>
     <div className="arrows">

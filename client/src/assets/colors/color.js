@@ -22,5 +22,25 @@ export var colors = [
   {
     // Cerulean Frost
     "color": "6891C3"
+  },
+  {
+    // Lumber
+    "color": "FFDFD3"
+  },
+  {
+    // Light coral
+    "color": "F47C7C"
+  },
+  {
+    // Flavescent
+    "color": "F7F48B"
+  },
+  {
+    // Granny Smith Apple
+    "color": "A1DE93"
+  },
+  {
+    // Little Boy Blue
+    "color": "70A1D7"
   }
 ]

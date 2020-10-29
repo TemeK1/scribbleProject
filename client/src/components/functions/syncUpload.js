@@ -1,13 +1,16 @@
 /*
- * To make sure that all the notes are uploaded (fetch, method: 'POST') to the endpoint.
- * One by one.
- */
-export function syncUpload(API, WRITE, notes, prioritizeLocal) {
+* To make sure that all the notes are uploaded (fetch, method: 'POST') to the endpoint.
+* One by one.
+* We make sure (await) to have all the results before we proceed, just so that logic of the app would stay intact.
+* @API url of API to feth messages
+* @WRITE extension of API url path for writing/editing
+* @notes currently existing local notes
+* @prioritizeLocal to indicate whether local or remote more recent edits should be favored.
+*/
+export async function syncUpload(API, WRITE, notes, prioritizeLocal) {
   try {
 
-    let editTime = new Date().getTime();
-
-    if (prioritizeLocal) {
+    if (prioritizeLocal === 1) {
       for (let note of notes) {
 
         let requestOptions = {
@@ -28,6 +31,8 @@ export function syncUpload(API, WRITE, notes, prioritizeLocal) {
         };
 
         if (note.warning === true) {
+          // Hence we do not care about mismatch (we prefer local  recent edits), we can already remote so called
+          // remote attributes from object. And warning itself as well.
           delete note.titleRemote;
           delete note.textRemote;
           delete note.colorRemote;
@@ -39,14 +44,21 @@ export function syncUpload(API, WRITE, notes, prioritizeLocal) {
           delete note.warning;
         }
 
-        fetch(API + WRITE, requestOptions)
+        // Here we use POST method to transfer one Note to the ENDPOINT, and wait to make sure.
+        await fetch(API + WRITE, requestOptions)
           .then(response => response.json())
           .then(data => console.log(data));
       }
     } else {
       for (let note of notes) {
+        // Here we chose to prefer remote recent edits so let's store data of those attributes first, per note!
         if (note.warning === true) {
-          note.lastEdited = note.lastEditedRemote;
+          note.title = note.titleRemote;
+          note.text = note.textRemote;
+          note.color = note.colorRemote;
+          note.text = note.textRemote;
+          note.left = note.leftRemote;
+          note.top = note.topRemote;
           delete note.titleRemote;
           delete note.textRemote;
           delete note.colorRemote;
@@ -56,7 +68,6 @@ export function syncUpload(API, WRITE, notes, prioritizeLocal) {
           delete note.leftRemote;
           delete note.topRemote;
           delete note.warning;
-          continue;
         }
 
         let requestOptions = {
@@ -66,7 +77,7 @@ export function syncUpload(API, WRITE, notes, prioritizeLocal) {
           },
           body: JSON.stringify({
             time: note.time,
-            lastEdited: editTime,
+            lastEdited: note.lastEdited,
             left: note.left,
             top: note.top,
             title: note.title,
@@ -75,8 +86,8 @@ export function syncUpload(API, WRITE, notes, prioritizeLocal) {
             order: note.order
           })
         };
-
-        fetch(API + WRITE, requestOptions)
+        // Here we use POST method to transfer one Note to the ENDPOINT, and wait to make sure.
+        await fetch(API + WRITE, requestOptions)
           .then(response => response.json())
           .then(data => console.log(data));
       }

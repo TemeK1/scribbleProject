@@ -14,7 +14,7 @@ export function noteTemplate(time, order, color, joke) {
     title: "sample title",
     text: joke,
     left: Math.floor(Math.random() * 70),
-    top: 10 + Math.floor(Math.random() * 50),
+    top: 12 + Math.floor(Math.random() * 50),
     color: color
   }
 }

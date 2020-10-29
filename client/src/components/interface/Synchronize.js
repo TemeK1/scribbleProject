@@ -31,7 +31,8 @@ class Synchronize extends React.Component {
   async synchronize() {
     let uploadNotes = true;
     this.swap();
-    let clonedNotes = await syncDownload(this.props.api, [...this.state.notes]);
+    let clonedNotes = await syncDownload(this.props.api, [...this.props.notes]);
+
     for (let note of clonedNotes) {
       if (note.warning === true) {
         uploadNotes = false;
@@ -47,7 +48,6 @@ class Synchronize extends React.Component {
     }.bind(this));
 
     if (uploadNotes === true) {
-      console.log("addsdsaadsdsadsa");
       this.upload(1);
     }
 
@@ -55,14 +55,23 @@ class Synchronize extends React.Component {
     this.props.updateNotes(clonedNotes);
   }
 
-  upload(confirmation) {
-    let notes = syncUpload(this.props.api, this.props.write, [...this.state.notes], confirmation);
+  async upload(confirmation) {
+    let notes = await syncUpload(this.props.api, this.props.write, [...this.state.notes], confirmation);
 
     this.setState({
       notes: notes
     }, function() {
       this.updateItem(this.state);
     }.bind(this));
+
+    this.props.updateNotes(notes);
+
+    // The deed is done.
+    if (confirmation === 1) {
+      window.confirm("Synchronization succesfull (local recent notes prioritized)");
+    } else {
+      window.confirm("Synchronization succesfull (remote recent notes prioritized)");
+    }
 
   }
 
@@ -134,6 +143,7 @@ class Synchronize extends React.Component {
     <div className="syncButtons">
     <button className="tallennus" onClick={() => this.upload(1)}>Prioritize local edits</button>
     <button className="tallennus" onClick={() => this.upload(0)}>Prioritize remote edits</button>
+    {this.props.status}
     </div>
     </div>
     </div> :
