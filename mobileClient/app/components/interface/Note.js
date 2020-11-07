@@ -5,6 +5,14 @@ import cancelNote from '../../assets/images/cancelNote.png';
 import editNote from '../../assets/images/editNote.png';
 import removeNote from '../../assets/images/removeNote.png';
 
+import { styles } from '../../assets/style/styles.js';
+
+import {
+  Image,
+  Text,
+  View
+} from 'react-native';
+
 /*
 * Component for individual Notes.
 */
@@ -32,7 +40,6 @@ class Note extends React.Component {
     this.delete = this.delete.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.onDragstart = this.onDragStart.bind(this);
     this.setActivity = this.setActivity.bind(this);
   }
 
@@ -108,13 +115,6 @@ class Note extends React.Component {
     this.setActivity();
   }
 
-  /*
-  * To transport an order value of dragged Note via dataTransfer.
-  */
-  onDragStart(e) {
-    e.dataTransfer.setData("text/plain", e.target.getAttribute("id"));
-  }
-
   render() {
     let color = [];
 
@@ -125,39 +125,43 @@ class Note extends React.Component {
         if (this.state.color === c.color) {
           checked = true;
         }
-
-        color.push(<div className="radioColor" key={c.color} id={c.color} style={{backgroundColor: '#' + c.color}}><input type="radio" name="color" checked={checked} value={c.color} onChange={() => {this.setState({color: c.color})}} /></div>);
+//<RButton selected={checked} color={c.color} />
+        color.push(<Pressable key={10000 * Math.random()} onPress={() => { this.setState({color: c.color})} }></Pressable>);
       }
     }
     let noteClass = this.state.active ? "Note NoteActive" : "Note";
     let content = this.state.active ?
     // This editable version will be rendered if the note is active
-    <div>
-    <form className="Edit" onSubmit={this.handleSubmit}>
-    <div className="noteOptions">
-    <div id="cancel" onClick={() => this.setActivity()}><img src={cancelNote} alt="Cancel" title="Cancel" width="32" height="32" /></div>
-    <div id="delete" onClick={e => this.delete(e)}><img src={removeNote} alt="Delete" title="Delete" width="32" height="32" /></div>
-    <input type="image" src={editNote} className="Edit" width="32" height="32" alt="Edit" title="Edit"></input>
-    </div>
-    <input type="text" id="title" name="title" value={this.state.title} onChange={this.handleChange} style={{backgroundColor: '#' + this.state.color, border: '0px'}}/>
-    <textarea rows="5" cols="20" id="text" name="text" value={this.state.text} onChange={this.handleChange} style={{backgroundColor: '#' + this.state.color, border: '0px'}} />
-    <div className="colors">{color}</div>
-    </form>
-    </div>:
+    <View>
+    <View>
+    <View id="cancel" onPress={() => this.setActivity()}><Image src={cancelNote} style={styles.cancel} /></View>
+    <View id="delete" onPress={e => this.delete(e)}><Image src={removeNote} style={styles.remove} /></View>
+    <Image src={editNote} style={styles.edit}></Image>
+    </View>
+    <TextInput name="title" value={this.state.title}/>
+    <TextInput multiline={true} numberOfLines={1} name="text" value={this.state.text}/>
+    <View>{color}</View>
+    </View>:
     // This non-editable version will be rendered if the note is not active
-    <div className="nonActive">
-    <div className="Title">{this.props.title}</div><div className="Text">{this.props.text}</div>
-    <div className="arrows">
-    <div id="arrowUp" onClick={e => this.changeOrder(e)}><img src={arrowUp} alt="Arrow up" width="32" height="32" value="1"/></div>
-    <div id="arrowDown" onClick={e => this.changeOrder(e)}><img src={arrowDown} alt="Arrow down" width="32" height="32" value="0" /></div>
-    </div>
-    </div>;
+    <View>
+    <View style={styles.title}>{this.props.title}</View><View style={styles.text}>{this.props.text}</View>
+    <View style={styles.arrows}>
+    <View id="arrowUp" onPress={e => this.changeOrder(e)}><Image src={arrowUp} style={styles.arrowUp} value="1"/></View>
+    <View id="arrowDown" onPress={e => this.changeOrder(e)}><Image src={arrowDown} styles={styles.arrowDown} value="0" /></View>
+    </View>
+    </View>;
 
-    return (
-      <div id={this.props.time} order={this.props.order} draggable="true" className={noteClass} style={{backgroundColor: '#' + this.state.color, top: this.props.top + '%', left: this.props.left + '%', order: this.props.order}}
-       onDragStart={this.onDragStart} onClick={this.click}>
-      {content}
-      </div>);
+    //      {content}
+    try {
+      return (
+        <View id={this.props.time} order={this.props.order} style={{backgroundColor: '#' + this.state.color, order: this.props.order}}
+         onPress={this.click}>
+        <Text style={{ color: 'black'}}>test</Text>
+        </View>);
+    } catch(e) {
+        return (<View><Text>Error occurred!</Text></View>);
+    }
+
   }
 }
 

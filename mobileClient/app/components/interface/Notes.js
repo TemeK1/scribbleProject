@@ -1,14 +1,19 @@
 import React from 'react';
 import Note from './Note.js';
 import Synchronize from './Synchronize.js';
-import { Button, Image, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Button,
+  Image,
+  Text,
+  TouchableOpacity,
+  View
+} from 'react-native';
+
 import { styles } from '../../assets/style/styles.js';
 
 // Import Functions
 import {sortNotes} from '../functions/sortNotes.js';
 import {calcOrder} from '../functions/calcOrder.js';
-import {calcPosition} from '../functions/calcPosition.js';
-import {handleLocalStorage} from '../functions/handleLocalStorage.js';
 import {noteTemplate} from '../functions/noteTemplate.js';
 
 // Import Colors
@@ -45,10 +50,8 @@ class Notes extends React.Component {
 
     this.addNew = this.addNew.bind(this);
     this.delete = this.delete.bind(this);
-    this.dragOver = this.dragOver.bind(this);
     this.fetchRandomColor = this.fetchRandomColor.bind(this);
     this.notesVisibility = this.notesVisibility.bind(this);
-    this.onDrop = this.onDrop.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.order = this.order.bind(this);
     this.updateNotes = this.updateNotes.bind(this)
@@ -130,10 +133,6 @@ class Notes extends React.Component {
 
   }
 
-  dragOver(e) {
-    e.preventDefault();
-  }
-
   /*
   * Callback function (used from Synchronize Component)
   * Just to indicate if Notes should be rendered at the moment or not.
@@ -150,23 +149,6 @@ class Notes extends React.Component {
   fetchRandomColor() {
     let random = Math.floor(Math.random() * this.state.colors.length);
     return JSON.parse(JSON.stringify(this.state.colors[random].color));
-  }
-
-  /*
-  * This will be called when a Note is dragged and then dropped in wide screen edition
-  */
-  onDrop(e) {
-    e.preventDefault();
-    // Order number of dragged note is parsed from dataTransfer.
-    let time = parseInt(e.dataTransfer.getData("text/plain"));
-    let clonedNotes = [...this.state.notes];
-    // We call calcPosition to calculate an absolute top- and left position for dragged note
-    clonedNotes = calcPosition(clonedNotes, e.clientX, e.clientY, time);
-
-    // Make sure changes are stored...
-    // clonedNotes = handleLocalStorage(clonedNotes);
-    this.setState({ notes: clonedNotes });
-
   }
 
   /*
@@ -253,14 +235,14 @@ class Notes extends React.Component {
     if (!this.state.hideNotes) {
       for (let note of notes) {
         renderNotes.push(<Note changeOrder={this.order} delete={this.delete} colors={this.state.colors}
-          order={note.order} time={note.time} title={note.title} onSubmit={this.onSubmit} text={note.text} color={note.color}
-          top={note.top} left={note.left} key={note.time} />);
+          order={note.order} time={note.time} title={note.title}
+          onSubmit={this.onSubmit} text={note.text} color={note.color} key={note.time} />);
       }
     }
 
     //<Synchronize api={API} write={WRITE} notes={this.state.notes} updateNotes={this.updateNotes} notesVisibility={this.notesVisibility} />
     return (
-      <View style={styles.sectioncontainer} onDrop={e => this.onDrop(e)} onDragOver={e => this.dragOver(e)}>
+      <View style={styles.sectioncontainer}>
         <View style={{ display: "flex", flexDirection: "row", justifyContent: "flex-start" }}>
           <Image source={scribbleSquare} style={styles.logo}/>
           <Text style={styles.appTitle}>Scribble 2000</Text>
@@ -268,7 +250,7 @@ class Notes extends React.Component {
           <View><TouchableOpacity onPress={() => this.addNew()}><Image source={sync} style={styles.add}/></TouchableOpacity></View>
         </View>
         <View style={styles.body}>
-          <View style={styles.sectioncontainer2}>
+          <View>
             {renderNotes}
           </View>
         </View>

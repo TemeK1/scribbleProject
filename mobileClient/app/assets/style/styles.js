@@ -1,11 +1,11 @@
 import React from 'react';
 
 import {
-  StyleSheet,
+  StyleSheet
 } from 'react-native';
 
 import {
-  Colors,
+  Colors
 } from 'react-native/Libraries/NewAppScreen';
 
 export const styles = StyleSheet.create({
@@ -24,8 +24,6 @@ export const styles = StyleSheet.create({
   },
   scroll: {
     width: '100%',
-  },
-  sectioncontainer2: {
   },
   appTitle: {
     fontSize: 35,
@@ -102,13 +100,5 @@ export const styles = StyleSheet.create({
     height: 100,
     alignSelf: 'center',
     marginVertical: 5,
-  },
-  swipeContentContainerStyle: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
-    borderRadius: 10,
-    borderColor: '#e3e3e3',
-    borderWidth: 1,
   }
 });

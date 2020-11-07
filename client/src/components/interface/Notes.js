@@ -150,7 +150,7 @@ class Notes extends React.Component {
   }
 
   /*
-  * This will be called when a Note is dragged and then dropped in wide screen edition
+  * This will be called when a Note is dragged and then dropped on wide screen edition
   */
   onDrop(e) {
     e.preventDefault();
