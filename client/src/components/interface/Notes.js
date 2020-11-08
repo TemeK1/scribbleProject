@@ -216,7 +216,6 @@ class Notes extends React.Component {
       function() {
         this.updateItem(this.state);
       }.bind(this));
-
   }
 
   /*
@@ -239,7 +238,6 @@ class Notes extends React.Component {
       // ...and UPDATE the state.
       this.setState({ notes: clonedNotes });
     }
-
   }
 
   render() {

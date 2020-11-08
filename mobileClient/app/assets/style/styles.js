@@ -20,7 +20,6 @@ export const styles = StyleSheet.create({
   sectioncontainer: {
     marginTop: '5%',
     paddingHorizontal: 0,
-    flexDirection: 'row',
   },
   scroll: {
     width: '100%',

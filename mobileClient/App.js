@@ -16,7 +16,7 @@ class App extends React.Component {
         <SafeAreaView style={styles.fullscreen}>
           <ScrollView style={styles.scroll}>
             <Notes />
-           </ScrollView>
+          </ScrollView>
         </SafeAreaView>
       </View>
    )

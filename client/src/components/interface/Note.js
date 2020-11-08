@@ -14,14 +14,10 @@ class Note extends React.Component {
 
     let title = JSON.parse(JSON.stringify(this.props.title)),
         text = JSON.parse(JSON.stringify(this.props.text)),
-        color = JSON.parse(JSON.stringify(this.props.color)),
-        order = JSON.parse(JSON.stringify(this.props.order)),
-        time = JSON.parse(JSON.stringify(this.props.time));
+        color = JSON.parse(JSON.stringify(this.props.color));
 
     this.state = {
       active: false,
-      time: time,
-      order: order,
       title: title,
       text: text,
       color: color
@@ -46,9 +42,9 @@ class Note extends React.Component {
   /*
   * This is used when a small arrow is clicked to swap the position of this note.
   */
-  changeOrder(e) {
+  changeOrder(e, order) {
     e.stopPropagation();
-    this.props.changeOrder(parseInt(e.target.getAttribute('value')), this.props.order);
+    this.props.changeOrder(order, this.props.order);
   }
 
   /*
@@ -71,7 +67,7 @@ class Note extends React.Component {
 
   /*
   * To prehandle and prevalidate edits of this specific Note.
-  * More decent validation will occur in API ENDPOINT.
+  * More decent validation SHOULD occur in API ENDPOINT.
   */
   handleChange(e) {
     let obj = e.target,
@@ -103,7 +99,12 @@ class Note extends React.Component {
   */
   handleSubmit(e) {
     e.preventDefault();
-    let note = JSON.parse(JSON.stringify({title: this.state.title, order: this.state.order, time: this.state.time, text: this.state.text, color: this.state.color}));
+    let note = JSON.parse(JSON.stringify({
+      title: this.state.title,
+      text: this.state.text,
+      time: this.props.time,
+      color: this.state.color
+    }));
     this.props.onSubmit(note);
     this.setActivity();
   }
@@ -148,8 +149,8 @@ class Note extends React.Component {
     <div className="nonActive">
     <div className="Title">{this.props.title}</div><div className="Text">{this.props.text}</div>
     <div className="arrows">
-    <div id="arrowUp" onClick={e => this.changeOrder(e)}><img src={arrowUp} alt="Arrow up" width="32" height="32" value="1"/></div>
-    <div id="arrowDown" onClick={e => this.changeOrder(e)}><img src={arrowDown} alt="Arrow down" width="32" height="32" value="0" /></div>
+    <div id="arrowUp" onClick={(e) => this.changeOrder(e, 1)}><img src={arrowUp} alt="Arrow up" width="32" height="32"/></div>
+    <div id="arrowDown" onClick={(e) => this.changeOrder(e, 0)}><img src={arrowDown} alt="Arrow down" width="32" height="32" /></div>
     </div>
     </div>;
 

@@ -172,7 +172,6 @@ class Notes extends React.Component {
   */
   onSubmit(note) {
     let clonedNotes = [...this.state.notes];
-
     for (let n of clonedNotes) {
       if (n.time === note.time) {
         n.text = note.text;
@@ -208,23 +207,19 @@ class Notes extends React.Component {
   * To remove an individual node from the client-side.
   */
   delete(order) {
-    let confirmRemove = window.confirm("Do you want to remove the note?");
-    if (confirmRemove) {
-      let clonedNotes = [...this.state.notes];
-      for (let i = 0; i < clonedNotes.length; i++) {
-        if (clonedNotes[i].order === order) {
-          // We first synchronize the deletion with the ENDPOINT DATABASE..
-          this.syncDelete(clonedNotes[i].time);
-          // Then we make sure to remove it from localStorage as well...
-          localStorage.removeItem(clonedNotes[i].time);
-          // And lastly splice it off from the array..
-          clonedNotes.splice(i, 1);
-        }
+    let clonedNotes = [...this.state.notes];
+    for (let i = 0; i < clonedNotes.length; i++) {
+      if (clonedNotes[i].order === order) {
+        // We first synchronize the deletion with the ENDPOINT DATABASE..
+        this.syncDelete(clonedNotes[i].time);
+        // Then we make sure to remove it from localStorage as well...
+        //localStorage.removeItem(clonedNotes[i].time);
+        // And lastly splice it off from the array..
+        clonedNotes.splice(i, 1);
       }
       // ...and UPDATE the state.
-      this.setState({ notes: clonedNotes });
     }
-
+    this.setState({ notes: clonedNotes });
   }
 
   render() {
@@ -232,18 +227,20 @@ class Notes extends React.Component {
     let notes = [...this.state.notes];
     let renderNotes = [];
 
-    if (!this.state.hideNotes) {
+    //if (!this.state.hideNotes) {
       for (let note of notes) {
         renderNotes.push(<Note changeOrder={this.order} delete={this.delete} colors={this.state.colors}
           order={note.order} time={note.time} title={note.title}
           onSubmit={this.onSubmit} text={note.text} color={note.color} key={note.time} />);
       }
-    }
+
+      console.log(renderNotes);
+    //}
 
     //<Synchronize api={API} write={WRITE} notes={this.state.notes} updateNotes={this.updateNotes} notesVisibility={this.notesVisibility} />
     try {
       return (
-        <View style={styles.sectioncontainer}>
+        <View style={styles.sectioncontainer2}>
           <View style={{ display: "flex", flexDirection: "row", justifyContent: "flex-start" }}>
             <Image source={scribbleSquare} style={styles.logo}/>
             <Text style={styles.appTitle}>Scribble 2000</Text>
@@ -251,9 +248,7 @@ class Notes extends React.Component {
             <View><TouchableOpacity onPress={() => this.addNew()}><Image source={sync} style={styles.add}/></TouchableOpacity></View>
           </View>
           <View style={styles.body}>
-            <View>
               {renderNotes}
-            </View>
           </View>
         </View>);
     } catch(e) {

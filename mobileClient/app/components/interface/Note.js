@@ -9,9 +9,11 @@ import { styles } from '../../assets/style/styles.js';
 
 import {
   Image,
+  Pressable,
   Text,
   TextInput,
-  View
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
 /*
@@ -23,14 +25,10 @@ class Note extends React.Component {
 
     let title = JSON.parse(JSON.stringify(this.props.title)),
         text = JSON.parse(JSON.stringify(this.props.text)),
-        color = JSON.parse(JSON.stringify(this.props.color)),
-        order = JSON.parse(JSON.stringify(this.props.order)),
-        time = JSON.parse(JSON.stringify(this.props.time));
+        color = JSON.parse(JSON.stringify(this.props.color));
 
     this.state = {
       active: false,
-      time: time,
-      order: order,
       title: title,
       text: text,
       color: color
@@ -39,9 +37,11 @@ class Note extends React.Component {
     this.changeOrder = this.changeOrder.bind(this);
     this.click = this.click.bind(this);
     this.delete = this.delete.bind(this);
-    this.handleChange = this.handleChange.bind(this);
+    this.handleTitle = this.handleTitle.bind(this);
+    this.handleText = this.handleText.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.setActivity = this.setActivity.bind(this);
+    this.swipeColor = this.swipeColor.bind(this);
   }
 
   /*
@@ -54,9 +54,8 @@ class Note extends React.Component {
   /*
   * This is used when a small arrow is clicked to swap the position of this note.
   */
-  changeOrder(e) {
-    e.stopPropagation();
-    this.props.changeOrder(parseInt(e.target.getAttribute('value')), this.props.order);
+  changeOrder(order) {
+    this.props.changeOrder(order, this.props.order);
   }
 
   /*
@@ -78,30 +77,29 @@ class Note extends React.Component {
   }
 
   /*
-  * To prehandle and prevalidate edits of this specific Note.
-  * More decent validation will occur in API ENDPOINT.
+  * To prevalidate title of this note.
+  * More decent validation SHOULD occur in API ENDPOINT.
   */
-  handleChange(e) {
-    let obj = e.target,
-        field = obj.name,
-        value = obj.value,
-        type = obj.type,
-        newstate = {};
-
-    // To validate text and title fields.
-    if (type === 'text' || obj.id === "text") {
-      if (value.trim().length < 3) {
-        obj.setCustomValidity("Too short, at least three characters are required");
-      } else {
-        obj.setCustomValidity("");
-      }
-      newstate[field] = value;
-
-      this.setState(newstate);
+  handleTitle(title) {
+    // To validate title-field
+    if (title.trim().length > 60) {
       return;
+    } else {
+      this.setState({ title: title });
     }
+  }
 
-    this.setState(newstate);
+  /*
+  * To prevalidate text of this note.
+  * More decent validation SHOULD occur in API ENDPOINT.
+  */
+  handleText(text) {
+    // To validate title-field
+    if (text.trim().length > 3000) {
+      return;
+    } else {
+      this.setState({ text: text });
+    }
   }
 
   /*
@@ -111,9 +109,25 @@ class Note extends React.Component {
   */
   handleSubmit(e) {
     e.preventDefault();
-    let note = JSON.parse(JSON.stringify({title: this.state.title, order: this.state.order, time: this.state.time, text: this.state.text, color: this.state.color}));
+    let note = JSON.parse(JSON.stringify({
+      title: this.state.title,
+      text: this.state.text,
+      time: this.props.time,
+      color: this.state.color
+    }));
     this.props.onSubmit(note);
     this.setActivity();
+  }
+
+  /*
+  * Swipe to fetch a random color.
+  * Swiping itself still to be implemented.
+  */
+  swipeColor() {
+    let random = Math.floor(Math.random() * this.props.colors.length);
+    let color = JSON.parse(JSON.stringify(this.props.colors[random].color));
+    this.setState({ color: color });
+    this.props.onSubmit({ color: color, time: this.props.time, text: this.state.text, title: this.state.title});
   }
 
   render() {
@@ -126,37 +140,39 @@ class Note extends React.Component {
         if (this.state.color === c.color) {
           checked = true;
         }
-//<RButton selected={checked} color={c.color} />
-        color.push(<Pressable key={10000 * Math.random()} onPress={() => { this.setState({color: c.color})} }></Pressable>);
+
+        color.push(<Pressable key={10000 * Math.random()} onPress={() => { this.setState({ color: c.color })} }><Text>x</Text></Pressable>);
       }
     }
-    let noteClass = this.state.active ? "Note NoteActive" : "Note";
+
     let content = this.state.active ?
     // This editable version will be rendered if the note is active
     <View>
-    <View>
-    <View id="cancel" onPress={() => this.setActivity()}><Image source={cancelNote} style={styles.cancel} /></View>
-    <View id="delete" onPress={e => this.delete(e)}><Image source={removeNote} style={styles.remove} /></View>
-    <Image source={editNote} style={styles.edit}></Image>
-    </View>
-    <TextInput name="title" value={this.state.title}/>
-    <TextInput multiline={true} numberOfLines={1} name="text" value={this.state.text}/>
-    <View>{color}</View>
+      <View id="cancel"><TouchableOpacity onPress={() => this.setActivity()}><Image source={cancelNote} style={styles.cancel} /></TouchableOpacity></View>
+      <View id="delete"><TouchableOpacity onPress={(e) => this.delete(e)}><Image source={removeNote} style={styles.remove} /></TouchableOpacity></View>
+      <View id="edit"><TouchableOpacity onPress={(e) => this.handleSubmit(e) }><Image source={editNote} style={styles.edit}></Image></TouchableOpacity></View>
+      <View><TextInput name="title" value={this.state.title} onChangeText={(title) => this.handleTitle(title)}/></View>
+      <View><TextInput multiline={true} numberOfLines={1} name="text" value={this.state.text} onChangeText={(text) => this.handleText(text)}/></View>
+      <View style={{flexGrow: 1, flexDirection: 'row', justifyContent: 'space-around', paddingHorizontal: '5%' }}>
+        {color}
+      </View>
     </View>:
     // This non-editable version will be rendered if the note is not active
     <View>
-    <View style={styles.title}><Text>{this.props.title}</Text></View><View style={styles.text}><Text>{this.props.text}</Text></View>
-    <View style={styles.arrows}>
-    <View onPress={e => this.changeOrder(e)}><Image source={arrowUp} style={styles.arrow} value="1"/></View>
-    <View onPress={e => this.changeOrder(e)}><Image source={arrowDown} styles={styles.arrow} value="0" /></View>
-    </View>
+      <View><Text style={styles.title}>{this.props.title}</Text></View><View><Text style={styles.text}>{this.props.text}</Text></View>
+      <View style={styles.arrows}>
+        <View><Pressable onPress={() => this.changeOrder(1)}><Image source={arrowUp} style={styles.arrow} /></Pressable></View>
+        <View><Pressable onPress={() => this.changeOrder(0)}><Image source={arrowDown} style={styles.arrow} /></Pressable></View>
+      </View>
     </View>;
-    //      {content}
+
     try {
       return (
-        <View id={this.props.time} order={this.props.order} style={{backgroundColor: '#' + this.state.color, order: this.props.order}}
-         onPress={this.click}>
-        {content}
+        <View id={this.props.time} order={this.props.order} style={{
+          flexGrow: 1, flexDirection: 'column', backgroundColor: '#' + this.state.color, marginBottom: '1%', order: this.props.order }}>
+          <Pressable onPress={() => this.click()}>
+            {content}
+          </Pressable>
         </View>);
     } catch(e) {
         return (<View><Text>Error occurred!</Text></View>);
