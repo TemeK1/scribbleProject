@@ -153,11 +153,16 @@ class Note extends React.Component {
     </div>
     </div>;
 
-    return (
-      <div id={this.props.time} order={this.props.order} draggable="true" className={noteClass} style={{backgroundColor: '#' + this.state.color, top: this.props.top + '%', left: this.props.left + '%', order: this.props.order}}
-       onDragStart={this.onDragStart} onClick={this.click}>
-      {content}
-      </div>);
+    try {
+      return (
+        <div id={this.props.time} order={this.props.order} draggable="true" className={noteClass}
+        style={{backgroundColor: '#' + this.state.color, top: this.props.top + '%',
+        left: this.props.left + '%', order: this.props.order}} onDragStart={this.onDragStart} onClick={this.click}>
+            {content}
+        </div>);
+    } catch(e) {
+      return (<div>Error occurred!</div>);
+    }
   }
 }
 

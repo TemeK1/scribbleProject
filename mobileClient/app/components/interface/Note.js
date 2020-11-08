@@ -10,6 +10,7 @@ import { styles } from '../../assets/style/styles.js';
 import {
   Image,
   Text,
+  TextInput,
   View
 } from 'react-native';
 
@@ -134,9 +135,9 @@ class Note extends React.Component {
     // This editable version will be rendered if the note is active
     <View>
     <View>
-    <View id="cancel" onPress={() => this.setActivity()}><Image src={cancelNote} style={styles.cancel} /></View>
-    <View id="delete" onPress={e => this.delete(e)}><Image src={removeNote} style={styles.remove} /></View>
-    <Image src={editNote} style={styles.edit}></Image>
+    <View id="cancel" onPress={() => this.setActivity()}><Image source={cancelNote} style={styles.cancel} /></View>
+    <View id="delete" onPress={e => this.delete(e)}><Image source={removeNote} style={styles.remove} /></View>
+    <Image source={editNote} style={styles.edit}></Image>
     </View>
     <TextInput name="title" value={this.state.title}/>
     <TextInput multiline={true} numberOfLines={1} name="text" value={this.state.text}/>
@@ -144,24 +145,22 @@ class Note extends React.Component {
     </View>:
     // This non-editable version will be rendered if the note is not active
     <View>
-    <View style={styles.title}>{this.props.title}</View><View style={styles.text}>{this.props.text}</View>
+    <View style={styles.title}><Text>{this.props.title}</Text></View><View style={styles.text}><Text>{this.props.text}</Text></View>
     <View style={styles.arrows}>
-    <View id="arrowUp" onPress={e => this.changeOrder(e)}><Image src={arrowUp} style={styles.arrowUp} value="1"/></View>
-    <View id="arrowDown" onPress={e => this.changeOrder(e)}><Image src={arrowDown} styles={styles.arrowDown} value="0" /></View>
+    <View onPress={e => this.changeOrder(e)}><Image source={arrowUp} style={styles.arrow} value="1"/></View>
+    <View onPress={e => this.changeOrder(e)}><Image source={arrowDown} styles={styles.arrow} value="0" /></View>
     </View>
     </View>;
-
     //      {content}
     try {
       return (
         <View id={this.props.time} order={this.props.order} style={{backgroundColor: '#' + this.state.color, order: this.props.order}}
          onPress={this.click}>
-        <Text style={{ color: 'black'}}>test</Text>
+        {content}
         </View>);
     } catch(e) {
         return (<View><Text>Error occurred!</Text></View>);
     }
-
   }
 }
 

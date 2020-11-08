@@ -241,22 +241,25 @@ class Notes extends React.Component {
     }
 
     //<Synchronize api={API} write={WRITE} notes={this.state.notes} updateNotes={this.updateNotes} notesVisibility={this.notesVisibility} />
-    return (
-      <View style={styles.sectioncontainer}>
-        <View style={{ display: "flex", flexDirection: "row", justifyContent: "flex-start" }}>
-          <Image source={scribbleSquare} style={styles.logo}/>
-          <Text style={styles.appTitle}>Scribble 2000</Text>
-          <View><TouchableOpacity onPress={() => this.addNew()}><Image source={addNote} style={styles.add}/></TouchableOpacity></View>
-          <View><TouchableOpacity onPress={() => this.addNew()}><Image source={sync} style={styles.add}/></TouchableOpacity></View>
-        </View>
-        <View style={styles.body}>
-          <View>
-            {renderNotes}
+    try {
+      return (
+        <View style={styles.sectioncontainer}>
+          <View style={{ display: "flex", flexDirection: "row", justifyContent: "flex-start" }}>
+            <Image source={scribbleSquare} style={styles.logo}/>
+            <Text style={styles.appTitle}>Scribble 2000</Text>
+            <View><TouchableOpacity onPress={() => this.addNew()}><Image source={addNote} style={styles.add}/></TouchableOpacity></View>
+            <View><TouchableOpacity onPress={() => this.addNew()}><Image source={sync} style={styles.add}/></TouchableOpacity></View>
           </View>
-        </View>
-      </View>);
+          <View style={styles.body}>
+            <View>
+              {renderNotes}
+            </View>
+          </View>
+        </View>);
+    } catch(e) {
+      return (<View><Text>Error occurred!</Text></View>);
+    }
   }
-
 }
 
 export default Notes;

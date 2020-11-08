@@ -100,5 +100,15 @@ export const styles = StyleSheet.create({
     height: 100,
     alignSelf: 'center',
     marginVertical: 5,
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    textDecorationLine: "underline",
+    textDecorationStyle: "solid",
+    textAlign: 'center',
+  },
+  text: {
+    fontSize: 14,
   }
 });
