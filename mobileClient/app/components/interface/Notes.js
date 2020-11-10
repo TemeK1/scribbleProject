@@ -233,11 +233,8 @@ class Notes extends React.Component {
           order={note.order} time={note.time} title={note.title}
           onSubmit={this.onSubmit} text={note.text} color={note.color} key={note.time} />);
       }
-
-      console.log(renderNotes);
     //}
 
-    //<Synchronize api={API} write={WRITE} notes={this.state.notes} updateNotes={this.updateNotes} notesVisibility={this.notesVisibility} />
     try {
       return (
         <View style={styles.sectioncontainer2}>
@@ -245,7 +242,7 @@ class Notes extends React.Component {
             <Image source={scribbleSquare} style={styles.logo}/>
             <Text style={styles.appTitle}>Scribble 2000</Text>
             <View><TouchableOpacity onPress={() => this.addNew()}><Image source={addNote} style={styles.add}/></TouchableOpacity></View>
-            <View><TouchableOpacity onPress={() => this.addNew()}><Image source={sync} style={styles.add}/></TouchableOpacity></View>
+            <Synchronize api={API} write={WRITE} notes={this.state.notes} updateNotes={this.updateNotes} notesVisibility={this.notesVisibility} />
           </View>
           <View style={styles.body}>
               {renderNotes}

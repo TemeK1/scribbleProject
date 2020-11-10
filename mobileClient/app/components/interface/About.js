@@ -1,6 +1,17 @@
 import React from 'react';
 import cancelNote from '../../assets/images/cancelNote.png';
 
+import {
+  Button,
+  Image,
+  Linking,
+  Text,
+  Pressable,
+  View
+} from 'react-native';
+
+import { styles } from '../../assets/style/styles.js';
+
 /*
 * Just a simple Component for rendering about
 * details of the App for the end user to see.
@@ -35,21 +46,28 @@ class About extends React.Component {
   }
 
   render() {
-
     // We render this if the content is visible.
     let content = this.state.reveal ?
-    <div className="aboutLayer">
-    <p>{this.state.text}</p>
-    <p>{this.state.text2}</p>
-    <p className="address">{this.state.email}</p>
-    <p className="address"><a href={this.state.website} alt="home page" target="_blank" rel="noopener noreferrer">{this.state.website}</a></p>
-    <p className="address"><a href={this.state.graphics} alt="home page" target="_blank" rel="noopener noreferrer">{this.state.graphics}</a></p>
-    <div className="footer" onClick={() => this.about()}>About Scribble 2000 <img src={cancelNote} alt="Return" title="Return" width="32" height="32" /> </div>
-    </div> :
+    <View style={styles.aboutLayer}>
+      <Text>{this.state.text}</Text>
+      <Text>{this.state.text2}</Text>
+      <Text style={styles.address}>{this.state.email}</Text>
+      <Pressable onPress={() => Linking.openURL(this.state.website)}>
+        <Text style={{color: 'white', backgroundColor: '#4A2C29', marginBottom: '2%'}}>
+          {this.state.website}
+        </Text>
+      </Pressable>
+      <Pressable onPress={() => Linking.openURL(this.state.graphics)}>
+        <Text style={{color: 'white', backgroundColor: '#4A2C29', marginBottom: '2%'}}>
+          {this.state.graphics}
+        </Text>
+      </Pressable>
+      <View style={styles.footer}><Pressable onPress={() => this.about()}><Text>About Scribble 2000</Text></Pressable><Pressable onPress={() => this.about()}><Image source={cancelNote} style={styles.cancel} /></Pressable></View>
+    </View>:
     // And this if the content is not visible.
-    <div className="footer" onClick={() => this.about()}>About Scribble 2000</div>;
+    <View style={styles.footer}><Pressable onPress={() => this.about()}><Text>About Scribble 2000</Text></Pressable></View>;
 
-    return <div>{content}</div>;
+    return <View>{content}</View>;
   }
 }
 

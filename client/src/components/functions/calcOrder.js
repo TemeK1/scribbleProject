@@ -1,5 +1,5 @@
 /*
-*
+* Swaps the order of two notes.
 * @direction 1 == note should go "up", 0 == note should go "down"
 * @order order number of transported note
 * @notes all notes

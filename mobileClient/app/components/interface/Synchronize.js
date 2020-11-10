@@ -5,6 +5,18 @@ import Comparison from './Comparison.js';
 import {syncDownload} from '../functions/syncDownload.js';
 import {syncUpload} from '../functions/syncUpload.js';
 
+import {
+  Button,
+  Image,
+  Pressable,
+  Text,
+  TouchableOpacity,
+  View
+} from 'react-native';
+
+import { styles } from '../../assets/style/styles.js';
+import { Table, Row, Rows } from 'react-native-table-component';
+
 // Import Images
 import synchronizeNotes from '../../assets/images/synchronizeNotes.png';
 
@@ -65,14 +77,6 @@ class Synchronize extends React.Component {
     }.bind(this));
 
     this.props.updateNotes(notes);
-
-    // The deed is done.
-    if (confirmation === 1) {
-      window.confirm("Synchronization succesfull (local recent notes prioritized)");
-    } else {
-      window.confirm("Synchronization succesfull (remote recent notes prioritized)");
-    }
-
   }
 
   /*
@@ -127,30 +131,21 @@ class Synchronize extends React.Component {
 
     // We render this if the content is visible.
     let content = this.state.reveal && warningCount > 0 ?
-    <div>
-    <div><input type="image" src={synchronizeNotes} className="synchronize" width="48" height="48" alt="Synchronize notes with database" title="Synchronize notes with database" onClick={() => this.synchronize()}></input></div>
-    <div className="aboutLayer">
-    <h2>Remote database contains more recent edits!</h2>
-    <table>
-    <thead>
-    <tr><th>Local Text</th><th>Remote Text</th><th>Title, local => remote</th><th>Unique ID</th></tr>
-    </thead>
-    <tbody>
-    {renderNotes}
-    </tbody>
-    </table>
-    <div style={{ marginLeft: "2vw", marginRight: "2vw"}}>{message}</div>
-    <div className="syncButtons">
-    <button className="tallennus" onClick={() => this.upload(1)}>Prioritize local edits</button>
-    <button className="tallennus" onClick={() => this.upload(0)}>Prioritize remote edits</button>
-    {this.props.status}
-    </div>
-    </div>
-    </div> :
+    <View>
+    <View><Pressable onPress={() => this.synchronize()}><Image source={synchronizeNotes} style={styles.sync} /></Pressable></View>
+    <View style={styles.aboutLayer}>
+    <Text style={styles.h2}>Remote database contains more recent edits!</Text>
+    <View style={{ marginLeft: "2vw", marginRight: "2vw" }}><Text>{message}</Text></View>
+    <View style={styles.syncButtons}>
+    <Pressable style={styles.tallennus} onPress={() => this.upload(1)} value="Prioritize local edits"></Pressable>
+    <Pressable style={styles.tallennus} onPress={() => this.upload(0)} value="Prioritize remote edits"></Pressable>
+    </View>
+    </View>
+    </View> :
     // And this if the content is not visible.
-    <div><input type="image" src={synchronizeNotes} className="synchronize" width="48" height="48" alt="Synchronize notes with database" title="Synchronize notes with database" onClick={() => this.synchronize()}></input></div>;
+    <View><Pressable onPress={() => this.synchronize()}><Image source={synchronizeNotes} style={styles.sync} /></Pressable></View>
 
-    return <div>{content}</div>;
+    return <View>{content}</View>;
   }
 }
 

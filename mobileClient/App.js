@@ -1,4 +1,5 @@
 import React from 'react';
+import About from './app/components/interface/About.js';
 import {styles} from './app/assets/style/styles.js';
 import Notes from './app/components/interface/Notes.js';
 import { Image, SafeAreaView, ScrollView, Text, View } from 'react-native';
@@ -16,6 +17,7 @@ class App extends React.Component {
         <SafeAreaView style={styles.fullscreen}>
           <ScrollView style={styles.scroll}>
             <Notes />
+            <About />
           </ScrollView>
         </SafeAreaView>
       </View>

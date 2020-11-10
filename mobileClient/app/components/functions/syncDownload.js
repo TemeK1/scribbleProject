@@ -65,5 +65,6 @@ export async function syncDownload(API, clonedNotes) {
   } catch (error) {
     console.log(error);
   }
+  console.log(clonedNotes);
   return clonedNotes;
 }
