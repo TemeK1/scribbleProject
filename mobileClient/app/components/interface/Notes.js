@@ -1,6 +1,8 @@
 import React from 'react';
 import Note from './Note.js';
 import Synchronize from './Synchronize.js';
+const Realm = require('realm');
+
 import {
   Button,
   Image,
@@ -11,10 +13,13 @@ import {
 
 import { styles } from '../../assets/style/styles.js';
 
+import * as Schema from '../realm/Schema.js';
+
 // Import Functions
 import {sortNotes} from '../functions/sortNotes.js';
 import {calcOrder} from '../functions/calcOrder.js';
 import {noteTemplate} from '../functions/noteTemplate.js';
+import {handleNotes} from '../functions/handleNotes.js';
 
 // Import Colors
 import {colors} from '../../assets/colors/color.js';
@@ -25,7 +30,7 @@ import addNote from '../../assets/images/addNote.png'
 import sync from '../../assets/images/synchronizeNotes.png'
 
 // API Constants
-const API = "http://localhost:9000/notes"; // Base address...
+const API = "https://scribble2000endpoint.oa.r.appspot.com/notes"; // Base address...
 const WRITE = "/write/"; // ...for Writing and Editing
 const DELETE = "/delete/"; // ... for Deleting
 const JOKE = "https://sv443.net/jokeapi/v2/joke/Any?blacklistFlags=nsfw,religious,political,racist,sexist&type=single";
@@ -40,13 +45,8 @@ class Notes extends React.Component {
     super(props);
 
     let clonedColors = JSON.parse(JSON.stringify(colors));
-    //let loadNotes = handleLocalStorage([]);
 
-    this.state = {
-      notes: [],
-      colors: clonedColors,
-      hideNotes: false
-    }
+    this.state = { notes: [], colors: clonedColors, hideNotes: false };
 
     this.addNew = this.addNew.bind(this);
     this.delete = this.delete.bind(this);
@@ -54,7 +54,29 @@ class Notes extends React.Component {
     this.notesVisibility = this.notesVisibility.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.order = this.order.bind(this);
-    this.updateNotes = this.updateNotes.bind(this)
+    this.updateNotes = this.updateNotes.bind(this);
+    this.storeLocal = this.storeLocal.bind(this);
+  }
+
+  componentDidMount() {
+    Realm.open({schema: [Schema.Note]})
+    .then(async realm => {
+       // Fetch notes from local Realm database
+       let notes = realm.objects('Note');
+       currentNotes = await handleNotes(notes);
+       this.setState({ realm: realm, notes: currentNotes });
+     });
+  }
+
+  /*
+  * This happens when the component will be unmounted soon at the end of its lifecycle.
+  * Then the last connection to Realm wil be terminated.
+  */
+  componentWillUnmount() {
+    const {realm} = this.state;
+    if (realm !== null && !realm.isClosed) {
+      realm.close();
+    }
   }
 
   /*
@@ -106,14 +128,62 @@ class Notes extends React.Component {
       newNote = noteTemplate(time.getTime(), 1, color, joke);
     }
 
-    // And update whatever needs to be updated (state, localStorage)
+    // And update whatever needs to be updated (state, Realm)
     let clonedNotes = [...this.state.notes];
     clonedNotes.push(newNote);
-    //clonedNotes = handleLocalStorage(clonedNotes);
+    // Realm storing
+    this.storeLocal(clonedNotes);
     this.setState({ notes: clonedNotes },
       function() {
       this.updateItem(this.state);
       }.bind(this));
+  }
+
+  /*
+  * Notes will be stored in a local Realm database.
+  */
+  storeLocal(notes) {
+    Realm.open({schema: [Schema.Note]})
+    .then(realm => {
+        realm.write(() => {
+          let realmNotes = realm.objects('Note');
+
+          for (let i = 0; i < notes.length; i++) {
+            let newNeeded = true;
+            let editNote = null;
+            for (let j = 0; j < realmNotes.length; j++) {
+              if (realmNotes[j].time == notes[i].time) {
+                newNeeded = false;
+                editNote = realmNotes[j];
+                break;
+              }
+            }
+
+            if (newNeeded === true) {
+              const nNote = realm.create('Note', {
+                time: notes[i].time,
+                lastEdited: notes[i].lastEdited,
+                order: notes[i].order,
+                title: notes[i].title,
+                text: notes[i].text,
+                color: notes[i].color,
+                left: notes[i].left,
+                top: notes[i].top
+              });
+            } else {
+              editNote.lastEdited = notes[i].lastEdited;
+              editNote.order = notes[i].order;
+              editNote.title = notes[i].title;
+              editNote.text = notes[i].text;
+              editNote.color = notes[i].color;
+              editNote.left = notes[i].left;
+              editNote.top = notes[i].top;
+            }
+          }
+        });
+      this.setState({ realm: realm });
+      realm.close();
+    });
   }
 
   /*
@@ -162,7 +232,8 @@ class Notes extends React.Component {
     notes = calcOrder(direction, order, notes);
 
     // To make sure changes are stored...
-    //notes = handleLocalStorage(notes);
+    // Realm storing
+    this.storeLocal(notes);
     this.setState({ notes: notes });
   }
 
@@ -182,7 +253,8 @@ class Notes extends React.Component {
     }
 
     // To make sure changes are stored...
-    //clonedNotes = handleLocalStorage(clonedNotes);
+    // Realm storing
+    this.storeLocal(clonedNotes);
     this.setState({ notes: clonedNotes },
       function() {
       this.updateItem(this.state);
@@ -195,12 +267,11 @@ class Notes extends React.Component {
   * edits are mirrored to the component's state and localStorage.
   */
   updateNotes(notes) {
-    //notes = handleLocalStorage(notes);
+    this.storeLocal(notes);
     this.setState({ notes: notes, active: true },
       function() {
         this.updateItem(this.state);
       }.bind(this));
-
   }
 
   /*

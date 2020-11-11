@@ -19,7 +19,7 @@ export async function syncDownload(API, clonedNotes) {
       .then(response => response.json())
       .then(data => data.notes.map(item => {
         if (!clonedNotes.find(function(note) {
-            return note.time === item.time
+            return note.time === item.time;
           })) {
 
           // Let's push all the notes to array that we do not have locally yet.

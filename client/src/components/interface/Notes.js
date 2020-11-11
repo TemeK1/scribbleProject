@@ -17,7 +17,7 @@ import scribbleSquare from '../../assets/images/scribbleSquare.png';
 import addNote from '../../assets/images/addNote.png'
 
 // API Constants
-const API = "http://localhost:9000/notes"; // Base address...
+const API = "https://scribble2000endpoint.oa.r.appspot.com/notes"; // Base address...
 const WRITE = "/write/"; // ...for Writing and Editing
 const DELETE = "/delete/"; // ... for Deleting
 const JOKE = "https://sv443.net/jokeapi/v2/joke/Any?blacklistFlags=nsfw,religious,political,racist,sexist&type=single";
