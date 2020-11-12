@@ -62,7 +62,7 @@ class Note extends React.Component {
   */
   delete(e) {
     e.stopPropagation();
-    this.props.delete(this.props.order);
+    this.props.delete(this.props.time);
   }
 
   /*

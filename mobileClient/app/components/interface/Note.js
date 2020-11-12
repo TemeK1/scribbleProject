@@ -7,7 +7,10 @@ import removeNote from '../../assets/images/removeNote.png';
 
 import { styles } from '../../assets/style/styles.js';
 
+import { RadioButton } from './RadioButton.js';
+
 import {
+  Alert,
   Image,
   Pressable,
   Text,
@@ -15,6 +18,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+
+import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
 
 /*
 * Component for individual Notes.
@@ -40,6 +45,7 @@ class Note extends React.Component {
     this.handleTitle = this.handleTitle.bind(this);
     this.handleText = this.handleText.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.removeNote = this.removeNote.bind(this);
     this.setActivity = this.setActivity.bind(this);
     this.swipeColor = this.swipeColor.bind(this);
   }
@@ -73,7 +79,7 @@ class Note extends React.Component {
   */
   delete(e) {
     e.stopPropagation();
-    this.props.delete(this.props.order);
+    this.props.delete(this.props.time);
   }
 
   /*
@@ -130,7 +136,43 @@ class Note extends React.Component {
     this.props.onSubmit({ color: color, time: this.props.time, text: this.state.text, title: this.state.title});
   }
 
+  swipeDelete() {
+    this.removeNote();
+  }
+
+  onSwipe(gestureName, gestureState) {
+    const {SWIPE_LEFT, SWIPE_RIGHT} = swipeDirections;
+    this.setState({gestureName: gestureName});
+    switch (gestureName) {
+      case SWIPE_LEFT:
+      this.swipeDelete();
+      break;
+    case SWIPE_RIGHT:
+      this.swipeColor();
+      break;
+    }
+  }
+
+  removeNote = () =>
+    Alert.alert(
+      "Remove the note?",
+      "",
+      [
+        {
+          text: "Cancel"
+        },
+        { text: "OK",
+          onPress: () => this.props.delete(this.props.time)}
+      ],
+  );
+
   render() {
+    const config = {
+      velocityThreshold: 0.1,
+      directionalOffsetThreshold: 100,
+      gestureIsClickThreshold: 5,
+    };
+
     let color = [];
 
     if (this.state.active) {
@@ -141,25 +183,27 @@ class Note extends React.Component {
           checked = true;
         }
 
-        color.push(<Pressable key={10000 * Math.random()} onPress={() => { this.setState({ color: c.color })} }><Text>x</Text></Pressable>);
+        color.push(<Pressable key={10000 * Math.random()} onPress={() => { this.setState({ color: c.color })} }><RadioButton selected={checked} color={c.color} /></Pressable>);
       }
     }
 
     let content = this.state.active ?
     // This editable version will be rendered if the note is active
     <View>
-      <View id="cancel"><TouchableOpacity onPress={() => this.setActivity()}><Image source={cancelNote} style={styles.cancel} /></TouchableOpacity></View>
-      <View id="delete"><TouchableOpacity onPress={(e) => this.delete(e)}><Image source={removeNote} style={styles.remove} /></TouchableOpacity></View>
-      <View id="edit"><TouchableOpacity onPress={(e) => this.handleSubmit(e) }><Image source={editNote} style={styles.edit}></Image></TouchableOpacity></View>
-      <View><TextInput name="title" value={this.state.title} onChangeText={(title) => this.handleTitle(title)}/></View>
-      <View><TextInput multiline={true} numberOfLines={1} name="text" value={this.state.text} onChangeText={(text) => this.handleText(text)}/></View>
+      <View style={styles.buttons}>
+        <View id="cancel"><TouchableOpacity onPress={() => this.setActivity()}><Image source={cancelNote} style={styles.cancel} /></TouchableOpacity></View>
+        <View id="delete"><TouchableOpacity onPress={(e) => this.delete(e)}><Image source={removeNote} style={styles.remove} /></TouchableOpacity></View>
+        <View id="edit"><TouchableOpacity onPress={(e) => this.handleSubmit(e) }><Image source={editNote} style={styles.edit}></Image></TouchableOpacity></View>
+      </View>
+      <View><TextInput name="title" style={styles.title} value={this.state.title} onChangeText={(title) => this.handleTitle(title)}/></View>
+      <View><TextInput multiline={true} style={styles.text} numberOfLines={1} name="text" value={this.state.text} onChangeText={(text) => this.handleText(text)}/></View>
       <View style={{flexGrow: 1, flexDirection: 'row', justifyContent: 'space-around', paddingHorizontal: '5%' }}>
         {color}
       </View>
     </View>:
     // This non-editable version will be rendered if the note is not active
     <View>
-      <View><Text style={styles.title}>{this.props.title}</Text></View><View><Text style={styles.text}>{this.props.text}</Text></View>
+      <View><Text style={styles.title}>{this.props.order}</Text></View><View><Text style={styles.text}>{this.props.text}</Text></View>
       <View style={styles.arrows}>
         <View><Pressable onPress={() => this.changeOrder(1)}><Image source={arrowUp} style={styles.arrow} /></Pressable></View>
         <View><Pressable onPress={() => this.changeOrder(0)}><Image source={arrowDown} style={styles.arrow} /></Pressable></View>
@@ -168,12 +212,14 @@ class Note extends React.Component {
 
     try {
       return (
-        <View id={this.props.time} order={this.props.order} style={{
-          flexGrow: 1, flexDirection: 'column', backgroundColor: '#' + this.state.color, marginBottom: '1%', order: this.props.order }}>
+        <GestureRecognizer
+        onSwipe={(direction, state) => this.onSwipe(direction, state)}
+        config={config}
+        style={{ flexGrow: 1, flexDirection: 'column', borderRadius: 5, backgroundColor: '#' + this.state.color, marginBottom: '1%', order: this.props.order }}>
           <Pressable onPress={() => this.click()}>
             {content}
           </Pressable>
-        </View>);
+        </GestureRecognizer>);
     } catch(e) {
         return (<View><Text>Error occurred!</Text></View>);
     }

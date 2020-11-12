@@ -221,18 +221,19 @@ class Notes extends React.Component {
   /*
   * To remove an individual node from the client-side.
   */
-  delete(order) {
+  delete(time) {
     let confirmRemove = window.confirm("Do you want to remove the note?");
     if (confirmRemove) {
       let clonedNotes = [...this.state.notes];
       for (let i = 0; i < clonedNotes.length; i++) {
-        if (clonedNotes[i].order === order) {
+        if (clonedNotes[i].time === time) {
           // We first synchronize the deletion with the ENDPOINT DATABASE..
           this.syncDelete(clonedNotes[i].time);
           // Then we make sure to remove it from localStorage as well...
           localStorage.removeItem(clonedNotes[i].time);
           // And lastly splice it off from the array..
           clonedNotes.splice(i, 1);
+          break;
         }
       }
       // ...and UPDATE the state.

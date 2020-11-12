@@ -277,20 +277,37 @@ class Notes extends React.Component {
   /*
   * To remove an individual node from the client-side.
   */
-  delete(order) {
+  delete(time) {
     let clonedNotes = [...this.state.notes];
     for (let i = 0; i < clonedNotes.length; i++) {
-      if (clonedNotes[i].order === order) {
+      if (clonedNotes[i].time === time) {
         // We first synchronize the deletion with the ENDPOINT DATABASE..
         this.syncDelete(clonedNotes[i].time);
-        // Then we make sure to remove it from localStorage as well...
-        //localStorage.removeItem(clonedNotes[i].time);
-        // And lastly splice it off from the array..
-        clonedNotes.splice(i, 1);
+        // Then we make sure to remove it from local database as well...
+
+       Realm.open({schema: [Schema.Note]})
+       .then(realm => {
+           realm.write(() => {
+             let notes = realm.objects('Note');
+             for (let j = 0; j < notes.length; j++) {
+               if (notes[j].time == clonedNotes[i].time) {
+                 console.log(notes[j]);
+                 realm.delete(notes[j]);
+                 console.log("removed");
+                 break;
+               }
+             }
+
+             // And lastly splice it off from the array..
+             clonedNotes.splice(i, 1);
+             // ...and UPDATE the state.
+             this.setState({ realm: realm, notes: clonedNotes });
+           });
+           realm.close();
+        });
+        break;
       }
-      // ...and UPDATE the state.
     }
-    this.setState({ notes: clonedNotes });
   }
 
   render() {
@@ -309,14 +326,16 @@ class Notes extends React.Component {
     try {
       return (
         <View style={styles.sectioncontainer2}>
-          <View style={{ display: "flex", flexDirection: "row", justifyContent: "flex-start" }}>
+          <View style={{ display: "flex", flexDirection: "row", justifyContent: "flex-start", width: '100%' }}>
             <Image source={scribbleSquare} style={styles.logo}/>
             <Text style={styles.appTitle}>Scribble 2000</Text>
             <View><TouchableOpacity onPress={() => this.addNew()}><Image source={addNote} style={styles.add}/></TouchableOpacity></View>
             <Synchronize api={API} write={WRITE} notes={this.state.notes} updateNotes={this.updateNotes} notesVisibility={this.notesVisibility} />
           </View>
           <View style={styles.body}>
+            <View style={styles.notes}>
               {renderNotes}
+            </View>
           </View>
         </View>);
     } catch(e) {

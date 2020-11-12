@@ -21,11 +21,14 @@ export const styles = StyleSheet.create({
     marginTop: '5%',
     paddingHorizontal: 0,
   },
+  sectioncontainer2: {
+    height: '100%',
+  },
   scroll: {
     width: '100%',
   },
   appTitle: {
-    fontSize: 35,
+    fontSize: 25,
     marginTop: '10%',
     fontWeight: '700',
     textAlign: 'center',
@@ -51,12 +54,12 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: 1,
   },
-  viewNote: {
+  notes: {
+    flexGrow: 1,
+    flexDirection: 'column-reverse',
     width: '100%',
-  },
-  buttons: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    height: '100%',
+    marginTop: '10%',
   },
   cancel: {
     width: 40,
@@ -103,11 +106,17 @@ export const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: 'bold',
-    textDecorationLine: "underline",
-    textDecorationStyle: "solid",
+    textDecorationLine: 'underline',
+    textDecorationStyle: 'solid',
     textAlign: 'center',
   },
   text: {
     fontSize: 14,
+    paddingHorizontal: '6%',
+  },
+  buttons: {
+    justifyContent: 'space-between',
+    flexGrow: 1,
+    flexDirection: 'row',
   }
 });
