@@ -258,9 +258,9 @@ class Notes extends React.Component {
       return (
         <div className="Full" onDrop={e => this.onDrop(e)} onDragOver={e => this.dragOver(e)}>
         <div className="headerRow">
+        <Synchronize api={API} write={WRITE} notes={this.state.notes} updateNotes={this.updateNotes} notesVisibility={this.notesVisibility} />
           <div id="logo"><img src={scribbleSquare} alt="Scribble 2000" width="48" height="48" /> <h1>Scribble 2000</h1></div>
           <input type="image" src={addNote} className="add" title="Add new Note" width="48" height="48" alt="Add Note" onClick={this.addNew}></input>
-          <Synchronize api={API} write={WRITE} notes={this.state.notes} updateNotes={this.updateNotes} notesVisibility={this.notesVisibility} />
         </div>
         <div id="flex">{renderNotes}</div>
         </div>);

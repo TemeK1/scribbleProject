@@ -291,9 +291,7 @@ class Notes extends React.Component {
              let notes = realm.objects('Note');
              for (let j = 0; j < notes.length; j++) {
                if (notes[j].time == clonedNotes[i].time) {
-                 console.log(notes[j]);
                  realm.delete(notes[j]);
-                 console.log("removed");
                  break;
                }
              }
@@ -313,24 +311,25 @@ class Notes extends React.Component {
   render() {
 
     let notes = [...this.state.notes];
+    notes = sortNotes(notes);
     let renderNotes = [];
 
-    //if (!this.state.hideNotes) {
+    if (!this.state.hideNotes) {
       for (let note of notes) {
         renderNotes.push(<Note changeOrder={this.order} delete={this.delete} colors={this.state.colors}
           order={note.order} time={note.time} title={note.title}
           onSubmit={this.onSubmit} text={note.text} color={note.color} key={note.time} />);
       }
-    //}
+    }
 
     try {
       return (
-        <View style={styles.sectioncontainer2}>
-          <View style={{ display: "flex", flexDirection: "row", justifyContent: "flex-start", width: '100%' }}>
+        <View>
+          <View style={{ flexDirection: "row" }}>
+            <Synchronize api={API} write={WRITE} notes={this.state.notes} updateNotes={this.updateNotes} notesVisibility={this.notesVisibility} />
             <Image source={scribbleSquare} style={styles.logo}/>
             <Text style={styles.appTitle}>Scribble 2000</Text>
-            <View><TouchableOpacity onPress={() => this.addNew()}><Image source={addNote} style={styles.add}/></TouchableOpacity></View>
-            <Synchronize api={API} write={WRITE} notes={this.state.notes} updateNotes={this.updateNotes} notesVisibility={this.notesVisibility} />
+            <TouchableOpacity onPress={() => this.addNew()}><Image source={addNote} style={styles.add}/></TouchableOpacity>
           </View>
           <View style={styles.body}>
             <View style={styles.notes}>

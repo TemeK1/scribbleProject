@@ -1,5 +1,10 @@
 import React from 'react';
 
+import {
+  Text,
+  View
+} from 'react-native';
+
 /*
 * To compare two similar Notes, for user to decide if he wants to override mismatching remote notes or not.
 * This does nothing else; it exists only for visual aid.
@@ -11,30 +16,27 @@ class Comparison extends React.Component {
     let textRemote = [] ;
 
     if (this.props.warning) {
-      textRemote.push(<td style={{ backgroundColor: "green"  }}>{this.props.text}</td>);
-      textRemote.push(<td style={{ backgroundColor: "red"  }}>{this.props.textRemote}</td>);
-      textRemote.push(<td><span style={{ backgroundColor: "green"}}>{this.props.title}</span> => <span style={{ backgroundColor: "red" }}> {this.props.titleRemote}</span></td>);
+      textRemote.push(<View style={{ backgroundColor: "green"  }}><Text>L: {this.props.text}</Text></View>);
+      textRemote.push(<View style={{ backgroundColor: "red"  }}><Text>R: {this.props.textRemote}</Text></View>);
+      textRemote.push(<View><Text style={{ backgroundColor: "green"}}>L: {this.props.title}</Text><Text style={{ backgroundColor: "red" }}>R: {this.props.titleRemote}</Text></View>);
     } else {
       if (this.props.textRemote) {
-        textRemote.push(<td style={{ backgroundColor: "red"  }}>{this.props.text}</td>);
-        textRemote.push(<td style={{ backgroundColor: "green"  }}>{this.props.textRemote}</td>);
+        textRemote.push(<View style={{ backgroundColor: "red"  }}><Text>L: {this.props.text}</Text></View>);
+        textRemote.push(<View style={{ backgroundColor: "green"  }}><Text>R: {this.props.textRemote}</Text></View>);
       } else {
-        textRemote.push(<td style={{ backgroundColor: "green"  }}>{this.props.text}</td>);
-        textRemote.push(<td style={{ backgroundColor: "red"  }}>{this.props.textRemote}</td>);
+        textRemote.push(<View style={{ backgroundColor: "green"  }}><Text>L: {this.props.text}</Text></View>);
+        textRemote.push(<View style={{ backgroundColor: "red"  }}><Text>R: {this.props.textRemote}</Text></View>);
       }
 
-      textRemote.push(<td><span style={{ backgroundColor: "green"}}>{this.props.title}</span> => <span style={{ backgroundColor: "green" }}> {this.props.titleRemote}</span></td>);
+      textRemote.push(<View><Text style={{ backgroundColor: "green"}}>L: {this.props.title}</Text> => <Text style={{ backgroundColor: "green" }}>R: {this.props.titleRemote}</Text></View>);
     }
 
     return (
-      <React.Fragment>
-      <tr>
+      <View>
       {textRemote[0]}
       {textRemote[1]}
       {textRemote[2]}
-      <td>{this.props.time}</td>
-      </tr>
-      </React.Fragment>);
+      </View>);
   }
 }
 

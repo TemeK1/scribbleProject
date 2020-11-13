@@ -145,11 +145,11 @@ class Note extends React.Component {
     this.setState({gestureName: gestureName});
     switch (gestureName) {
       case SWIPE_LEFT:
-      this.swipeDelete();
-      break;
-    case SWIPE_RIGHT:
-      this.swipeColor();
-      break;
+        this.swipeDelete();
+        break;
+      case SWIPE_RIGHT:
+        this.swipeColor();
+        break;
     }
   }
 
@@ -203,7 +203,7 @@ class Note extends React.Component {
     </View>:
     // This non-editable version will be rendered if the note is not active
     <View>
-      <View><Text style={styles.title}>{this.props.order}</Text></View><View><Text style={styles.text}>{this.props.text}</Text></View>
+      <View><Text style={styles.title}>{this.props.title}</Text></View><View><Text style={styles.text}>{this.props.text}</Text></View>
       <View style={styles.arrows}>
         <View><Pressable onPress={() => this.changeOrder(1)}><Image source={arrowUp} style={styles.arrow} /></Pressable></View>
         <View><Pressable onPress={() => this.changeOrder(0)}><Image source={arrowDown} style={styles.arrow} /></Pressable></View>
@@ -215,7 +215,7 @@ class Note extends React.Component {
         <GestureRecognizer
         onSwipe={(direction, state) => this.onSwipe(direction, state)}
         config={config}
-        style={{ flexGrow: 1, flexDirection: 'column', borderRadius: 5, backgroundColor: '#' + this.state.color, marginBottom: '1%', order: this.props.order }}>
+        style={{ backgroundColor: '#' + this.state.color, marginBottom: '1%', minHeight: 85 }}>
           <Pressable onPress={() => this.click()}>
             {content}
           </Pressable>

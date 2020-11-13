@@ -68,9 +68,9 @@ class Synchronize extends React.Component {
 
     // The deed is done.
     if (confirmation === 1) {
-      window.confirm("Synchronization succesfull (local recent notes prioritized)");
+      window.confirm("Synchronization successful (local recent notes prioritized)");
     } else {
-      window.confirm("Synchronization succesfull (remote recent notes prioritized)");
+      window.confirm("Synchronization successful (remote recent notes prioritized)");
     }
 
   }

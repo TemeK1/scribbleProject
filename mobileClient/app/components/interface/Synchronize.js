@@ -6,6 +6,7 @@ import {syncDownload} from '../functions/syncDownload.js';
 import {syncUpload} from '../functions/syncUpload.js';
 
 import {
+  Alert,
   Button,
   Image,
   Pressable,
@@ -77,6 +78,17 @@ class Synchronize extends React.Component {
     }.bind(this));
 
     this.props.updateNotes(notes);
+
+    // The deed is done.
+    if (confirmation === 1) {
+      Alert.alert(
+        "Synchronization successful (local recent notes prioritized)"
+      );
+    } else {
+      Alert.alert(
+        "Synchronization successful (remote recent notes prioritized)"
+      );
+    }
   }
 
   /*
@@ -129,18 +141,21 @@ class Synchronize extends React.Component {
 
     let message = renderNotes.length ? "WARNING! Some of the remote content might have been edited more recently than your local notes. If you confirm to sync Notes between the browser and the endpoint database, you will lose some remote content (a text with red background). Press 'Prioritize local edits' to proceed to syncronize and to upload all the notes to the database, OR 'Prioritize remote edits' to keep the most recent remote edits (YOU WILL LOSE OLDER LOCAL GREEN ONES). This action is irreversible. Keep on mind that apart from these mismatches everything else will be syncronized in such a way that all the notes can be similarly found both from the client and database. In situations where you only use this app through a browser client, it is typically enough to choose 'Priotize local edits'" : "";
 
+    console.log(this.state.reveal);
+    console.log(warningCount);
     // We render this if the content is visible.
     let content = this.state.reveal && warningCount > 0 ?
     <View>
-    <View><Pressable onPress={() => this.synchronize()}><Image source={synchronizeNotes} style={styles.sync} /></Pressable></View>
-    <View style={styles.aboutLayer}>
-    <Text style={styles.h2}>Remote database contains more recent edits!</Text>
-    <View style={{ marginLeft: "2vw", marginRight: "2vw" }}><Text>{message}</Text></View>
-    <View style={styles.syncButtons}>
-    <Pressable style={styles.tallennus} onPress={() => this.upload(1)} value="Prioritize local edits"></Pressable>
-    <Pressable style={styles.tallennus} onPress={() => this.upload(0)} value="Prioritize remote edits"></Pressable>
-    </View>
-    </View>
+      <View><Pressable onPress={() => this.synchronize()}><Image source={synchronizeNotes} style={styles.sync} /></Pressable></View>
+      <View style={{ position: 'relative', left: 0, width: '100%', zIndex: 9999}}>
+        <Text style={styles.h2}>Remote database contains more recent edits!</Text>
+        <View>{renderNotes}</View>
+        <View><Text style={{ paddingHorizontal: '5%' }}>{message}</Text></View>
+        <View style={styles.syncButtons}>
+          <Button style={styles.tallennus} onPress={() => this.upload(1)} title="Prioritize local edits"></Button>
+          <Button style={styles.tallennus} onPress={() => this.upload(0)} title="Prioritize remote edits"></Button>
+        </View>
+      </View>
     </View> :
     // And this if the content is not visible.
     <View><Pressable onPress={() => this.synchronize()}><Image source={synchronizeNotes} style={styles.sync} /></Pressable></View>

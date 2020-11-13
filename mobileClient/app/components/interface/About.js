@@ -48,10 +48,10 @@ class About extends React.Component {
   render() {
     // We render this if the content is visible.
     let content = this.state.reveal ?
-    <View style={styles.aboutLayer}>
+    <View style={styles.about}>
       <Text>{this.state.text}</Text>
       <Text>{this.state.text2}</Text>
-      <Text style={styles.address}>{this.state.email}</Text>
+      <Text style={{color: 'black', backgroundColor: 'pink', marginBottom: '2%'}}>{this.state.email}</Text>
       <Pressable onPress={() => Linking.openURL(this.state.website)}>
         <Text style={{color: 'white', backgroundColor: '#4A2C29', marginBottom: '2%'}}>
           {this.state.website}

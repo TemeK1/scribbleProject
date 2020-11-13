@@ -13,14 +13,14 @@ class App extends React.Component {
 
   render() {
     return (
-      <View>
+      <>
         <SafeAreaView style={styles.fullscreen}>
           <ScrollView style={styles.scroll}>
             <Notes />
             <About />
           </ScrollView>
         </SafeAreaView>
-      </View>
+      </>
    )
   }
 }

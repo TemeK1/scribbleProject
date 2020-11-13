@@ -4,10 +4,6 @@ import {
   StyleSheet
 } from 'react-native';
 
-import {
-  Colors
-} from 'react-native/Libraries/NewAppScreen';
-
 export const styles = StyleSheet.create({
   body: {
     backgroundColor: "#F9FAE3",
@@ -20,9 +16,7 @@ export const styles = StyleSheet.create({
   sectioncontainer: {
     marginTop: '5%',
     paddingHorizontal: 0,
-  },
-  sectioncontainer2: {
-    height: '100%',
+    flexDirection: 'row',
   },
   scroll: {
     width: '100%',
@@ -32,33 +26,35 @@ export const styles = StyleSheet.create({
     marginTop: '10%',
     fontWeight: '700',
     textAlign: 'center',
-    color: Colors.black,
+    color: 'black',
   },
   sectionDescription: {
     marginTop: 50,
     fontSize: 18,
     fontWeight: '400',
-    color: Colors.dark,
+    color: 'black',
   },
   highlight: {
     fontWeight: '700',
   },
   footer: {
-    color: Colors.dark,
     fontWeight: '600',
+    marginLeft: 'auto',
+    marginRight: 'auto',
     padding: 20,
-    alignItems: 'center',
+    backgroundColor: '#63EBC4',
   },
-  flex: {
+  about: {
+    textAlign: 'center',
     flexGrow: 1,
-    flexDirection: 'row',
-    marginTop: 1,
+    width: '100%',
+    zIndex: 5,
+    flexDirection: 'column',
+    justifyContent: 'space-around',
+    paddingHorizontal: '5%',
   },
   notes: {
-    flexGrow: 1,
-    flexDirection: 'column-reverse',
     width: '100%',
-    height: '100%',
     marginTop: '10%',
   },
   cancel: {
@@ -86,6 +82,10 @@ export const styles = StyleSheet.create({
     width: 70,
     height: 70,
   },
+  arrow: {
+    width: 40,
+    height: 40,
+  },
   arrows: {
     flexDirection: 'column',
     justifyContent: 'space-between',
@@ -93,15 +93,16 @@ export const styles = StyleSheet.create({
     position: 'absolute',
     zIndex: 1,
   },
-  arrow: {
-    width: 40,
-    height: 40,
-  },
   button: {
     width: '80%',
     height: 100,
     alignSelf: 'center',
     marginVertical: 5,
+  },
+  buttons: {
+    justifyContent: 'space-around',
+    flexGrow: 1,
+    flexDirection: 'row',
   },
   title: {
     fontSize: 16,
@@ -112,11 +113,7 @@ export const styles = StyleSheet.create({
   },
   text: {
     fontSize: 14,
-    paddingHorizontal: '6%',
-  },
-  buttons: {
-    justifyContent: 'space-between',
-    flexGrow: 1,
-    flexDirection: 'row',
+    paddingHorizontal: 25,
+    marginBottom: 10
   }
 });
