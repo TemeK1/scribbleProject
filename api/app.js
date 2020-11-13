@@ -1,31 +1,40 @@
 var createError = require('http-errors');
 const express = require('express');
 
+// Required for environmental variables
 let dotenv = require('dotenv');
 dotenv.config({ path: './bin/.env' });
 
+// Required for easy MongoDB handling
 const mongoose = require('mongoose');
+// Connect to the database.
 mongoose.connect(process.env.APP_DATABASE_URL, {useNewUrlParser:true, useUnifiedTopology: true});
 mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
 var sanitize = require("mongo-sanitize");
 
 const app = new express();
 var path = require('path');
+// Potentially for later use
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require("cors");
 
-var indexRouter = require('./routes/index');
+// Lets import the necessary Note controllers.
 const searchController = require('./controllers/fetchNotes');
 const storeNoteController = require('./controllers/storeNote');
 const deleteNoteController = require('./controllers/deleteNote');
 
+// To sanitize the Note input.
+// Middleware.
 function cleanInput(req, res, next) {
   req.body = sanitize(req.body);
+  // After sanitizing we can proceed to the database-storing.
   next();
 }
 
 app.set('views', path.join(__dirname, 'views'));
+// Mainly for error templates
 app.set('view engine', 'jade');
 
 app.use(cors());
@@ -35,7 +44,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
 app.get('/notes', searchController);
 app.post('/notes/write/', cleanInput, storeNoteController);
 app.get('/notes/delete/:time', deleteNoteController);

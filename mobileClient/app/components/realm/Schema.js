@@ -1,3 +1,4 @@
+// Realm Schema for Note
 export const Note = {
   name: 'Note',
   primaryKey: 'time',

@@ -3,6 +3,7 @@ import Note from './Note.js';
 import Synchronize from './Synchronize.js';
 const Realm = require('realm');
 
+// Import necessary React Native Components
 import {
   Button,
   Image,
@@ -11,8 +12,10 @@ import {
   View
 } from 'react-native';
 
+// Import CSS
 import { styles } from '../../assets/style/styles.js';
 
+// Import Schema.
 import * as Schema from '../realm/Schema.js';
 
 // Import Functions
@@ -58,12 +61,16 @@ class Notes extends React.Component {
     this.storeLocal = this.storeLocal.bind(this);
   }
 
+  /*
+  * After the component has been mounted, we will fetch the notes
+  * from a local database.
+  */
   componentDidMount() {
     Realm.open({schema: [Schema.Note]})
-    .then(async realm => {
+    .then(realm => {
        // Fetch notes from local Realm database
        let notes = realm.objects('Note');
-       currentNotes = await handleNotes(notes);
+       currentNotes = handleNotes(notes);
        this.setState({ realm: realm, notes: currentNotes });
      });
   }
@@ -158,7 +165,7 @@ class Notes extends React.Component {
                 break;
               }
             }
-
+            // Here we store a new note in Realm database if it doesn't exist already
             if (newNeeded === true) {
               const nNote = realm.create('Note', {
                 time: notes[i].time,
@@ -171,6 +178,7 @@ class Notes extends React.Component {
                 top: notes[i].top
               });
             } else {
+              // However, if the note exists, we shall update its values.
               editNote.lastEdited = notes[i].lastEdited;
               editNote.order = notes[i].order;
               editNote.title = notes[i].title;
@@ -314,6 +322,7 @@ class Notes extends React.Component {
     notes = sortNotes(notes);
     let renderNotes = [];
 
+    // All notes to be rendered.
     if (!this.state.hideNotes) {
       for (let note of notes) {
         renderNotes.push(<Note changeOrder={this.order} delete={this.delete} colors={this.state.colors}

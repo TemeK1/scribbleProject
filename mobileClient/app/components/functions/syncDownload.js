@@ -54,7 +54,7 @@ export async function syncDownload(API, clonedNotes) {
             note.lastEditedRemote = item.lastEdited;
             note.warning = true;
           } else {
-            // If not, we can remote the warning immediately
+            // If not, we can remove warning immediately
             note.warning = false;
             note.order = maximumOrder;
           }

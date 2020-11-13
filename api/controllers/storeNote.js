@@ -1,7 +1,10 @@
 const Note = require('../models/Note.js');
 
+/*
+* Controller for either inserting a new note, or to edit a old one depending if
+* a note with chosen unique TIME already exists or not.
+*/
 module.exports =  async (req,res) => {
-
   try {
     const query = { time: req.body.time  },
           update = {

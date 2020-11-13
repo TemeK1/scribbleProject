@@ -8,8 +8,8 @@
 * @prioritizeLocal to indicate whether local or remote more recent edits should be favored.
 */
 export async function syncUpload(API, WRITE, notes, prioritizeLocal) {
-  try {
 
+  try {
     if (prioritizeLocal === 1) {
       for (let note of notes) {
 

@@ -1,5 +1,9 @@
+
 const Note = require('../models/Note.js');
 
+/*
+* Controller for deleting a chosen note (based on unique TIME) permanently from the database.
+*/
 module.exports =  async (req,res) => {
   try {
     const note = await Note.deleteOne({

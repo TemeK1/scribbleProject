@@ -1,6 +1,12 @@
 import React from 'react';
+
+// Import Images
 import cancelNote from '../../assets/images/cancelNote.png';
 
+// Import Style
+import { styles } from '../../assets/style/styles.js';
+
+// Import necessary React Native Components
 import {
   Button,
   Image,
@@ -10,13 +16,10 @@ import {
   View
 } from 'react-native';
 
-import { styles } from '../../assets/style/styles.js';
-
 /*
 * Just a simple Component for rendering about
 * details of the App for the end user to see.
 */
-
 class About extends React.Component {
   constructor(props) {
     super(props);

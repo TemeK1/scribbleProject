@@ -1,4 +1,6 @@
 import React from 'react';
+
+// Import Images
 import arrowUp from '../../assets/images/arrowUp.png';
 import arrowDown from '../../assets/images/arrowDown.png';
 import cancelNote from '../../assets/images/cancelNote.png';

@@ -1,9 +1,13 @@
 import React from 'react';
 
+// Import necessary React Native Components
 import {
-  View,
+  View
 } from 'react-native';
 
+/*
+* Function returns a stylized Radio button for optional color.
+*/
 export function RadioButton(props) {
 return (
     <View style={[{

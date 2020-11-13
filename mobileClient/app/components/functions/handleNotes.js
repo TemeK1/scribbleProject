@@ -1,20 +1,13 @@
 /*
-* @notes array of local notes
+* Here we just push notes from Realm database (notes) to an array (currentNotes).
+* @notes array of Realm notes
 * @return array of notes
 */
-export async function handleNotes(notes) {
+export function handleNotes(notes) {
   let currentNotes = [];
 
   for (let i = 0; i < notes.length; i++) {
-    let addNew = true;
-    for (let n of currentNotes) {
-      if (notes[i].time == n.time) {
-        addNew = false;
-      }
-    }
-    
-    if (addNew === true) {
-      let note = {
+    let note = {
         time: notes[i].time,
         lastEdited: notes[i].lastEdited,
         order: notes[i].order,
@@ -25,7 +18,6 @@ export async function handleNotes(notes) {
         top: notes[i].top
       };
       currentNotes.push(note);
-    }
   }
   return currentNotes;
 }

@@ -1,14 +1,19 @@
 import React from 'react';
+
+// Import Images
 import arrowUp from '../../assets/images/arrowUp.png';
 import arrowDown from '../../assets/images/arrowDown.png';
 import cancelNote from '../../assets/images/cancelNote.png';
 import editNote from '../../assets/images/editNote.png';
 import removeNote from '../../assets/images/removeNote.png';
 
+// Import CSS
 import { styles } from '../../assets/style/styles.js';
 
+// Import custom Radio button
 import { RadioButton } from './RadioButton.js';
 
+// Import necessary React Native Components
 import {
   Alert,
   Image,
@@ -19,6 +24,8 @@ import {
   View,
 } from 'react-native';
 
+
+// Import npm package for swipe gestures
 import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
 
 /*
@@ -136,16 +143,16 @@ class Note extends React.Component {
     this.props.onSubmit({ color: color, time: this.props.time, text: this.state.text, title: this.state.title});
   }
 
-  swipeDelete() {
-    this.removeNote();
-  }
-
+  /*
+  * Handler for alternative Swipes.
+  * LEFT (remove) or RIGHT (change random color)
+  */
   onSwipe(gestureName, gestureState) {
     const {SWIPE_LEFT, SWIPE_RIGHT} = swipeDirections;
     this.setState({gestureName: gestureName});
     switch (gestureName) {
       case SWIPE_LEFT:
-        this.swipeDelete();
+        this.removeNote();
         break;
       case SWIPE_RIGHT:
         this.swipeColor();
@@ -153,6 +160,9 @@ class Note extends React.Component {
     }
   }
 
+  /*
+  * This is prompted from the enduser
+  */
   removeNote = () =>
     Alert.alert(
       "Remove the note?",
@@ -167,6 +177,7 @@ class Note extends React.Component {
   );
 
   render() {
+    // Configuration for SWIPE
     const config = {
       velocityThreshold: 0.1,
       directionalOffsetThreshold: 100,
@@ -215,7 +226,7 @@ class Note extends React.Component {
         <GestureRecognizer
         onSwipe={(direction, state) => this.onSwipe(direction, state)}
         config={config}
-        style={{ backgroundColor: '#' + this.state.color, marginBottom: '1%', minHeight: 85 }}>
+        style={{ backgroundColor: '#' + this.state.color, marginBottom: '1%', minHeight: 85}}>
           <Pressable onPress={() => this.click()}>
             {content}
           </Pressable>

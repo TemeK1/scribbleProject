@@ -5,11 +5,15 @@ import Comparison from './Comparison.js';
 import {syncDownload} from '../functions/syncDownload.js';
 import {syncUpload} from '../functions/syncUpload.js';
 
-// Import Images
+// Import Pictures
 import synchronizeNotes from '../../assets/images/synchronizeNotes.png';
 
 /*
 * To synchronize notes.
+* Here we look for mismatches between local (client) and remote (endpoint) edits.
+* And synchronize local and remote Notes.
+* In case of a mismatch user is prompted to choose whether he would like to prioritize
+* more recent local or remote edits.
 */
 class Synchronize extends React.Component {
   constructor(props) {
@@ -30,13 +34,17 @@ class Synchronize extends React.Component {
   */
   async synchronize() {
     let uploadNotes = true;
+    // Swap the visibility of this Component for the enduser.
     this.swap();
+    // We wait until we have downloaded all the remote notes.
     let clonedNotes = await syncDownload(this.props.api, [...this.props.notes]);
 
+
     for (let note of clonedNotes) {
+      // If we find even one note with a mismatch warning, we won't
+      // immediately upload our local notes!!
       if (note.warning === true) {
         uploadNotes = false;
-        //this.props.notesVisibility(false);
         break;
       }
     }
@@ -47,23 +55,30 @@ class Synchronize extends React.Component {
       this.updateItem(this.state);
     }.bind(this));
 
+    // We proceed to upload immediately if there were no warnings.
     if (uploadNotes === true) {
       this.upload(1);
     }
 
-    // Callback to Notes
+    // Callback to Notes.js
     this.props.updateNotes(clonedNotes);
   }
 
+  /*
+  * We upload local Notes to the endpoint...
+  */
   async upload(confirmation) {
+    //... the magic happens here
     let notes = await syncUpload(this.props.api, this.props.write, [...this.state.notes], confirmation);
 
+    // After successful sync Operation we also update the state
     this.setState({
       notes: notes
     }, function() {
       this.updateItem(this.state);
     }.bind(this));
 
+    // Callback to Notes to update Note-elements for the enduser.
     this.props.updateNotes(notes);
 
     // The deed is done.
@@ -85,7 +100,7 @@ class Synchronize extends React.Component {
 
   /*
   * SWAP for this.state.reveal which
-  * indicates IF the  content IS VISIBLE OR NOT.
+  * indicates IF the content IS VISIBLE OR NOT.
   */
   swap() {
     if (this.state.reveal === false) {
@@ -109,7 +124,7 @@ class Synchronize extends React.Component {
     if (this.state.reveal) {
 
       for (let note of this.state.notes) {
-
+        // We will warn the user if there is a mismatch.
         if (note.warning === true) {
           warningCount++;
           renderNotes.push(<Comparison color={note.color}
@@ -123,6 +138,7 @@ class Synchronize extends React.Component {
 
     }
 
+    // User will see the warning message and is also prompted to choose whether he likes to prioritize more recent local or remote edits
     let message = renderNotes.length ? "WARNING! Some of the remote content might have been edited more recently than your local notes. If you confirm to sync Notes between the browser and the endpoint database, you will lose some remote content (a text with red background). Press 'Prioritize local edits' to proceed to syncronize and to upload all the notes to the database, OR 'Prioritize remote edits' to keep the most recent remote edits (YOU WILL LOSE OLDER LOCAL GREEN ONES). This action is irreversible. Keep on mind that apart from these mismatches everything else will be syncronized in such a way that all the notes can be similarly found both from the client and database. In situations where you only use this app through a browser client, it is typically enough to choose 'Priotize local edits'" : "";
 
     // We render this if the content is visible.

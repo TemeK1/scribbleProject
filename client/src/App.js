@@ -7,7 +7,6 @@ import './assets/style/style.css';
 * TIES504 Erikoistyö.
 * Notes Browser App "Scribble 2000". App.js renders two main components: Notes & About.
 */
-
 class App extends React.Component {
 
  render() {
