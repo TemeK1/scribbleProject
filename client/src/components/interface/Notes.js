@@ -44,7 +44,7 @@ class Notes extends React.Component {
     this.delete = this.delete.bind(this);
     this.dragOver = this.dragOver.bind(this);
     this.fetchRandomColor = this.fetchRandomColor.bind(this);
-    this.notesVisibility = this.notesVisibility.bind(this);
+    this.hideNotes = this.hideNotes.bind(this);
     this.onDrop = this.onDrop.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.order = this.order.bind(this);
@@ -135,7 +135,7 @@ class Notes extends React.Component {
   * Callback function (used from Synchronize Component)
   * Just to indicate if Notes should be rendered at the moment or not.
   */
-  notesVisibility(visibility) {
+  hideNotes(visibility) {
     this.setState({
       hideNotes: visibility
     });
@@ -171,7 +171,7 @@ class Notes extends React.Component {
   * This function will be called as a callback.
   */
   order(direction, order) {
-    // First we sort notes to make absolutely sure they are in Descending order.
+    // First we sort notes to make absolutely sure those are in Descending order.
     let notes = sortNotes([...this.state.notes], false);
     // Then we swap positions of two notes.
     notes = calcOrder(direction, order, notes);
@@ -245,6 +245,7 @@ class Notes extends React.Component {
 
     let notes = [...this.state.notes];
     let renderNotes = [];
+    let flexStyle = "";
 
     if (!this.state.hideNotes) {
       for (let note of notes) {
@@ -252,17 +253,20 @@ class Notes extends React.Component {
           order={note.order} time={note.time} title={note.title} onSubmit={this.onSubmit} text={note.text} color={note.color}
           top={note.top} left={note.left} key={note.time} />);
       }
+    } else {
+      flexStyle = "flexHide";
+      renderNotes.push(<div key={"qwerty123"}><p style={{ textAlign: "center" }}>Synchronizing...</p></div>);
     }
 
     try {
       return (
         <div className="Full" onDrop={e => this.onDrop(e)} onDragOver={e => this.dragOver(e)}>
-        <div className="headerRow">
-        <Synchronize api={API} write={WRITE} notes={this.state.notes} updateNotes={this.updateNotes} notesVisibility={this.notesVisibility} />
-          <div id="logo"><img src={scribbleSquare} alt="Scribble 2000" width="48" height="48" /> <h1>Scribble 2000</h1></div>
-          <input type="image" src={addNote} className="add" title="Add new Note" width="48" height="48" alt="Add Note" onClick={this.addNew}></input>
-        </div>
-        <div id="flex">{renderNotes}</div>
+          <div className="headerRow">
+            <Synchronize api={API} write={WRITE} notes={this.state.notes} updateNotes={this.updateNotes} hideNotes={this.hideNotes} />
+            <div id="logo"><img src={scribbleSquare} alt="Scribble 2000" width="48" height="48" /> <h1>Scribble 2000</h1></div>
+            <input type="image" src={addNote} className="add" title="Add new Note" width="48" height="48" alt="Add Note" onClick={this.addNew}></input>
+          </div>
+          <div id="flex" className={flexStyle}>{renderNotes}</div>
         </div>);
     } catch(e) {
       return (<div>Error occurred!</div>);

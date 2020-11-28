@@ -38,7 +38,7 @@ class Note extends React.Component {
   * To "activate" this Note to receive User Input.
   */
   click() {
-    if (!this.state.active) this.setState({active:true});
+    if (!this.state.active) this.setState({active:true, title: this.props.title, text: this.props.text, color: this.props.color});
   }
 
   /*
@@ -136,30 +136,30 @@ class Note extends React.Component {
     let content = this.state.active ?
     // This editable version will be rendered if the note is active
     <div>
-    <form className="Edit" onSubmit={this.handleSubmit}>
-    <div className="noteOptions">
-    <div id="cancel" onClick={() => this.setActivity()}><img src={cancelNote} alt="Cancel" title="Cancel" width="32" height="32" /></div>
-    <div id="delete" onClick={e => this.delete(e)}><img src={removeNote} alt="Delete" title="Delete" width="32" height="32" /></div>
-    <input type="image" src={editNote} className="Edit" width="32" height="32" alt="Edit" title="Edit"></input>
-    </div>
-    <input type="text" id="title" name="title" value={this.state.title} onChange={this.handleChange} style={{backgroundColor: '#' + this.state.color, border: '0px'}}/>
-    <textarea rows="5" cols="20" id="text" name="text" value={this.state.text} onChange={this.handleChange} style={{backgroundColor: '#' + this.state.color, border: '0px'}} />
-    <div className="colors">{color}</div>
-    </form>
+      <form className="Edit" onSubmit={this.handleSubmit}>
+         <div className="noteOptions">
+           <div id="cancel" onClick={() => this.setActivity()}><img src={cancelNote} alt="Cancel" title="Cancel" width="32" height="32" /></div>
+           <div id="delete" onClick={e => this.delete(e)}><img src={removeNote} alt="Delete" title="Delete" width="32" height="32" /></div>
+           <input type="image" src={editNote} className="Edit" width="32" height="32" alt="Edit" title="Edit"></input>
+        </div>
+        <input type="text" id="title" name="title" value={this.state.title} onChange={this.handleChange} style={{backgroundColor: '#' + this.props.color, border: '0px'}}/>
+        <textarea rows="5" cols="20" id="text" name="text" value={this.state.text} onChange={this.handleChange} style={{backgroundColor: '#' + this.props.color, border: '0px'}} />
+        <div className="colors">{color}</div>
+      </form>
     </div>:
     // This non-editable version will be rendered if the note is not active
     <div className="nonActive">
-    <div className="Title">{this.props.title}</div><div className="Text">{this.props.text}</div>
-    <div className="arrows">
-    <div id="arrowUp" onClick={(e) => this.changeOrder(e, 1)}><img src={arrowUp} alt="Arrow up" width="32" height="32"/></div>
-    <div id="arrowDown" onClick={(e) => this.changeOrder(e, 0)}><img src={arrowDown} alt="Arrow down" width="32" height="32" /></div>
-    </div>
+      <div className="Title">{this.props.order}</div><div className="Text">{this.props.text}</div>
+      <div className="arrows">
+        <div id="arrowUp" onClick={(e) => this.changeOrder(e, 1)}><img src={arrowUp} alt="Arrow up" width="32" height="32"/></div>
+        <div id="arrowDown" onClick={(e) => this.changeOrder(e, 0)}><img src={arrowDown} alt="Arrow down" width="32" height="32" /></div>
+      </div>
     </div>;
 
     try {
       return (
         <div id={this.props.time} order={this.props.order} draggable="true" className={noteClass}
-        style={{backgroundColor: '#' + this.state.color, top: this.props.top + '%',
+        style={{backgroundColor: '#' + this.props.color, top: this.props.top + '%',
         left: this.props.left + '%', order: this.props.order}} onDragStart={this.onDragStart} onClick={this.click}>
             {content}
         </div>);

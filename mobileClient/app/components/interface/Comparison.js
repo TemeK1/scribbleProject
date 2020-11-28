@@ -13,19 +13,14 @@ import {
 class Comparison extends React.Component {
 
   render() {
-    let textRemote = [] ;
 
     // If there is a mismatch,
     // we highlight the remote note with red backgroundColor
-    if (this.props.warning) {
-      textRemote.push(<View style={{ backgroundColor: "green" }}><Text>L: {this.props.text}</Text></View>);
-      textRemote.push(<View style={{ backgroundColor: "red" }}><Text>R: {this.props.textRemote}</Text></View>);
-      textRemote.push(<View><Text style={{ backgroundColor: "green"}}>L: {this.props.title}</Text><Text style={{ backgroundColor: "red" }}>R: {this.props.titleRemote}</Text></View>);
-    }
-
     return (
       <View>
-        {textRemote}
+        <View style={{ backgroundColor: "green" }}><Text>L: {this.props.text}</Text></View>
+        <View style={{ backgroundColor: "red" }}><Text>R: {this.props.textRemote}</Text></View>
+        <View><Text style={{ backgroundColor: "green"}}>L: {this.props.title}</Text><Text style={{ backgroundColor: "red" }}>R: {this.props.titleRemote}</Text></View>
       </View>);
   }
 }

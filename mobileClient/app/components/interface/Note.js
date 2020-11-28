@@ -61,7 +61,7 @@ class Note extends React.Component {
   * To "activate" this Note to receive User Input.
   */
   click() {
-    if (!this.state.active) this.setState({active:true});
+    if (!this.state.active) this.setState({ active:true, title: this.props.title, text: this.props.text, color: this.props.color });
   }
 
   /*
@@ -134,7 +134,6 @@ class Note extends React.Component {
 
   /*
   * Swipe to fetch a random color.
-  * Swiping itself still to be implemented.
   */
   swipeColor() {
     let random = Math.floor(Math.random() * this.props.colors.length);
@@ -214,7 +213,7 @@ class Note extends React.Component {
     </View>:
     // This non-editable version will be rendered if the note is not active
     <View>
-      <View><Text style={styles.title}>{this.props.title}</Text></View><View><Text style={styles.text}>{this.props.text}</Text></View>
+      <View><Text style={styles.title}>{this.props.order}</Text></View><View><Text style={styles.text}>{this.props.text}</Text></View>
       <View style={styles.arrows}>
         <View><Pressable onPress={() => this.changeOrder(1)}><Image source={arrowUp} style={styles.arrow} /></Pressable></View>
         <View><Pressable onPress={() => this.changeOrder(0)}><Image source={arrowDown} style={styles.arrow} /></Pressable></View>
@@ -226,7 +225,7 @@ class Note extends React.Component {
         <GestureRecognizer
         onSwipe={(direction, state) => this.onSwipe(direction, state)}
         config={config}
-        style={{ backgroundColor: '#' + this.state.color, marginBottom: '1%', minHeight: 85}}>
+        style={{ backgroundColor: '#' + this.props.color, marginBottom: 2, minHeight: 85}}>
           <Pressable onPress={() => this.click()}>
             {content}
           </Pressable>

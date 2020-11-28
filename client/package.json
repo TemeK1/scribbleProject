@@ -1,5 +1,6 @@
 {
   "name": "client",
+  "homepage": "http://users.jyu.fi/~tekapyla/erikoistyo",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

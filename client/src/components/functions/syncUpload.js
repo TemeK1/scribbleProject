@@ -12,7 +12,6 @@ export async function syncUpload(API, WRITE, notes, prioritizeLocal) {
   try {
     if (prioritizeLocal === 1) {
       for (let note of notes) {
-
         let requestOptions = {
           method: 'POST',
           headers: {
@@ -50,8 +49,8 @@ export async function syncUpload(API, WRITE, notes, prioritizeLocal) {
           .then(data => console.log(data));
       }
     } else {
+      // Here we chose to prefer remote recent edits so let's store data of those attributes first, per note!
       for (let note of notes) {
-        // Here we chose to prefer remote recent edits so let's store data of those attributes first, per note!
         if (note.warning === true) {
           note.title = note.titleRemote;
           note.text = note.textRemote;

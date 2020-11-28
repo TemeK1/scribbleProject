@@ -88,8 +88,7 @@ export async function syncUpload(API, WRITE, notes, prioritizeLocal) {
         };
         // Here we use POST method to transfer one Note to the ENDPOINT, and wait to make sure.
         await fetch(API + WRITE, requestOptions)
-          .then(response => response.json())
-          .then(data => console.log(data));
+          .then(response => response.json());
       }
 
     }

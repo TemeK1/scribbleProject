@@ -54,7 +54,7 @@ class Notes extends React.Component {
     this.addNew = this.addNew.bind(this);
     this.delete = this.delete.bind(this);
     this.fetchRandomColor = this.fetchRandomColor.bind(this);
-    this.notesVisibility = this.notesVisibility.bind(this);
+    this.hideNotes = this.hideNotes.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.order = this.order.bind(this);
     this.updateNotes = this.updateNotes.bind(this);
@@ -93,8 +93,7 @@ class Notes extends React.Component {
   syncDelete(time) {
     try {
       fetch(API + DELETE + time)
-      .then(response => response.json())
-      .then(data => console.log(data));
+      .then(response => response.json());
     } catch (error) {
       console.log(error);
     }
@@ -215,7 +214,7 @@ class Notes extends React.Component {
   * Callback function (used from Synchronize Component)
   * Just to indicate if Notes should be rendered at the moment or not.
   */
-  notesVisibility(visibility) {
+  hideNotes(visibility) {
     this.setState({
       hideNotes: visibility
     });
@@ -329,13 +328,15 @@ class Notes extends React.Component {
           order={note.order} time={note.time} title={note.title}
           onSubmit={this.onSubmit} text={note.text} color={note.color} key={note.time} />);
       }
+    } else {
+      renderNotes.push(<View key={"qwerty123"}><Text style={{ textAlign: "center" }}>Synchronizing...</Text></View>);
     }
 
     try {
       return (
         <View>
           <View style={{ flexDirection: "row" }}>
-            <Synchronize api={API} write={WRITE} notes={this.state.notes} updateNotes={this.updateNotes} notesVisibility={this.notesVisibility} />
+            <Synchronize api={API} write={WRITE} notes={this.state.notes} updateNotes={this.updateNotes} hideNotes={this.hideNotes} />
             <Image source={scribbleSquare} style={styles.logo}/>
             <Text style={styles.appTitle}>Scribble 2000</Text>
             <TouchableOpacity onPress={() => this.addNew()}><Image source={addNote} style={styles.add}/></TouchableOpacity>

@@ -10,5 +10,11 @@ export function sortNotes(notes) {
     return 0;
   });
 
+  let number = 1;
+  for (let i = notes.length -1; i >= 0; i--) {
+    notes[i].order = number;
+    number++;
+  }
+
   return notes;
 }

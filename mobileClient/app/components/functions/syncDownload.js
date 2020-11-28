@@ -8,12 +8,12 @@
 */
 export async function syncDownload(API, clonedNotes) {
   try {
-    let maximumOrder = 1;
+    //let maximumOrder = 1;
     // Helps to make sure we won't have duplicate order numbers
-    for (let note of clonedNotes) {
-      note.order = maximumOrder;
-      maximumOrder++;
-    }
+    //for (let note of clonedNotes) {
+    //  note.order = maximumOrder;
+    //  maximumOrder++;
+    //}
 
     await fetch(API)
       .then(response => response.json())
@@ -22,11 +22,11 @@ export async function syncDownload(API, clonedNotes) {
             return note.time === item.time;
           })) {
 
-          // Let's push all the notes to array that we do not have locally yet.
+          // Let's push all notes to array in case we do not have them locally yet
           clonedNotes.push({
             time: item.time,
             lastEdited: item.lastEdited,
-            order: maximumOrder,
+            order: item.order,
             top: item.top,
             left: item.left,
             color: item.color,
@@ -39,7 +39,7 @@ export async function syncDownload(API, clonedNotes) {
         } else {
 
           let note = clonedNotes.find(function(note) {
-            return note.time === item.time
+            return note.time === item.time;
           })
 
           // If remote note has been edited more recently
@@ -49,22 +49,21 @@ export async function syncDownload(API, clonedNotes) {
             note.colorRemote = item.color;
             note.leftRemote = item.left;
             note.topRemote = item.top;
-            note.orderRemote = maximumOrder;
+            note.orderRemote = item.order;
             note.timeRemote = item.time;
             note.lastEditedRemote = item.lastEdited;
             note.warning = true;
           } else {
             // If not, we can remove warning immediately
             note.warning = false;
-            note.order = maximumOrder;
+            note.order = item.order;
           }
         }
-        maximumOrder++
+        //maximumOrder++
       }));
 
   } catch (error) {
     console.log(error);
   }
-  console.log(clonedNotes);
   return clonedNotes;
 }
