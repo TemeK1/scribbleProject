@@ -37,7 +37,8 @@ class Notes extends React.Component {
     this.state = {
       notes: loadNotes,
       colors: clonedColors,
-      hideNotes: false
+      hideNotes: false,
+      orderChanged: false
     }
 
     this.addNew = this.addNew.bind(this);
@@ -138,7 +139,10 @@ class Notes extends React.Component {
   hideNotes(visibility) {
     this.setState({
       hideNotes: visibility
-    });
+    },
+    function() {
+    this.updateItem(this.state);
+    }.bind(this));
   }
 
   /*
@@ -163,7 +167,6 @@ class Notes extends React.Component {
     // Make sure changes are stored...
     clonedNotes = handleLocalStorage(clonedNotes);
     this.setState({ notes: clonedNotes });
-
   }
 
   /*
@@ -178,7 +181,10 @@ class Notes extends React.Component {
 
     // To make sure changes are stored...
     notes = handleLocalStorage(notes);
-    this.setState({ notes: notes });
+    this.setState({ notes: notes, orderChanged: true },
+      function() {
+      this.updateItem(this.state);
+      }.bind(this));
   }
 
   /*
@@ -212,7 +218,7 @@ class Notes extends React.Component {
   */
   updateNotes(notes) {
     notes = handleLocalStorage(notes);
-    this.setState({ notes: notes, active: true },
+    this.setState({ notes: notes, orderChanged: false },
       function() {
         this.updateItem(this.state);
       }.bind(this));
@@ -255,15 +261,17 @@ class Notes extends React.Component {
       }
     } else {
       flexStyle = "flexHide";
-      renderNotes.push(<div key={"qwerty123"}><p style={{ textAlign: "center" }}>Synchronizing...</p></div>);
+      renderNotes.push(<div key={"qwerty123"}><p style={{ textAlign: "center", marginBottom: "2vw" }}>Synchronizing...</p></div>);
     }
+
+    //{this.state.hideNotes ? <div><p style={{ textAlign: "center", marginBottom: 2 }}>Synchronizing...</p></div>:null}
 
     try {
       return (
         <div className="Full" onDrop={e => this.onDrop(e)} onDragOver={e => this.dragOver(e)}>
           <div className="headerRow">
-            <Synchronize api={API} write={WRITE} notes={this.state.notes} updateNotes={this.updateNotes} hideNotes={this.hideNotes} />
-            <div id="logo"><img src={scribbleSquare} alt="Scribble 2000" width="48" height="48" /> <h1>Scribble 2000</h1></div>
+            <Synchronize api={API} write={WRITE} notes={this.state.notes} orderChanged={this.state.orderChanged} updateNotes={this.updateNotes} hideNotes={this.hideNotes} hideContent={this.state.hideNotes} />
+            <div id="logo"><img src={scribbleSquare} alt="Scribble 2000" width="48" height="48" /><h1>Scribble 2000</h1></div>
             <input type="image" src={addNote} className="add" title="Add new Note" width="48" height="48" alt="Add Note" onClick={this.addNew}></input>
           </div>
           <div id="flex" className={flexStyle}>{renderNotes}</div>

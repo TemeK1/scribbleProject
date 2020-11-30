@@ -49,7 +49,12 @@ class Notes extends React.Component {
 
     let clonedColors = JSON.parse(JSON.stringify(colors));
 
-    this.state = { notes: [], colors: clonedColors, hideNotes: false };
+    this.state = {
+      notes: [],
+      colors: clonedColors,
+      hideNotes: false,
+      orderChanged: false
+    };
 
     this.addNew = this.addNew.bind(this);
     this.delete = this.delete.bind(this);
@@ -217,7 +222,10 @@ class Notes extends React.Component {
   hideNotes(visibility) {
     this.setState({
       hideNotes: visibility
-    });
+    },
+    function() {
+    this.updateItem(this.state);
+    }.bind(this));
   }
 
   /*
@@ -241,7 +249,10 @@ class Notes extends React.Component {
     // To make sure changes are stored...
     // Realm storing
     this.storeLocal(notes);
-    this.setState({ notes: notes });
+    this.setState({ notes: notes, orderChanged: true },
+      function() {
+        this.updateItem(this.state);
+      }.bind(this));
   }
 
   /*
@@ -275,7 +286,7 @@ class Notes extends React.Component {
   */
   updateNotes(notes) {
     this.storeLocal(notes);
-    this.setState({ notes: notes, active: true },
+    this.setState({ notes: notes, orderChanged: false },
       function() {
         this.updateItem(this.state);
       }.bind(this));
@@ -324,22 +335,24 @@ class Notes extends React.Component {
     // All notes to be rendered.
     if (!this.state.hideNotes) {
       for (let note of notes) {
-        renderNotes.push(<Note changeOrder={this.order} delete={this.delete} colors={this.state.colors}
+        renderNotes.push(<Note lastEdited={note.lastEdited} changeOrder={this.order} delete={this.delete} colors={this.state.colors}
           order={note.order} time={note.time} title={note.title}
           onSubmit={this.onSubmit} text={note.text} color={note.color} key={note.time} />);
       }
-    } else {
-      renderNotes.push(<View key={"qwerty123"}><Text style={{ textAlign: "center" }}>Synchronizing...</Text></View>);
     }
+
+    //{this.state.hideNotes ? <View><Text style={{ textAlign: "center", marginBottom: 2 }}>Synchronizing...</Text></View>:null}
 
     try {
       return (
         <View>
-          <View style={{ flexDirection: "row" }}>
-            <Synchronize api={API} write={WRITE} notes={this.state.notes} updateNotes={this.updateNotes} hideNotes={this.hideNotes} />
-            <Image source={scribbleSquare} style={styles.logo}/>
-            <Text style={styles.appTitle}>Scribble 2000</Text>
-            <TouchableOpacity onPress={() => this.addNew()}><Image source={addNote} style={styles.add}/></TouchableOpacity>
+          <View>
+            <View style={{ flexDirection: "row"}}>
+              <View style={{ flexDirection: "column", flex: 1, flexWrap: 'wrap' }}><Synchronize api={API} write={WRITE} notes={this.state.notes} orderChanged={this.state.orderChanged} updateNotes={this.updateNotes} hideNotes={this.hideNotes} hideContent={this.state.hideNotes} /></View>
+              <View><Image source={scribbleSquare} style={styles.logo}/></View>
+              <View><Text style={styles.appTitle}>Scribble 2000</Text></View>
+              <View><TouchableOpacity onPress={() => this.addNew()}><Image source={addNote} style={styles.add}/></TouchableOpacity></View>
+            </View>
           </View>
           <View style={styles.body}>
             <View style={styles.notes}>

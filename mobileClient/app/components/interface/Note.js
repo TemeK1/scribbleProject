@@ -213,7 +213,7 @@ class Note extends React.Component {
     </View>:
     // This non-editable version will be rendered if the note is not active
     <View>
-      <View><Text style={styles.title}>{this.props.order}</Text></View><View><Text style={styles.text}>{this.props.text}</Text></View>
+      <View><Text style={styles.title}>{this.props.title}</Text></View><View><Text style={styles.text}>{this.props.text}</Text></View>
       <View style={styles.arrows}>
         <View><Pressable onPress={() => this.changeOrder(1)}><Image source={arrowUp} style={styles.arrow} /></Pressable></View>
         <View><Pressable onPress={() => this.changeOrder(0)}><Image source={arrowDown} style={styles.arrow} /></Pressable></View>

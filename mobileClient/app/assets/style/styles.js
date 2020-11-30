@@ -110,10 +110,12 @@ export const styles = StyleSheet.create({
     textDecorationLine: 'underline',
     textDecorationStyle: 'solid',
     textAlign: 'center',
+    marginTop: 5,
   },
   text: {
     fontSize: 14,
     paddingHorizontal: 25,
-    marginBottom: 10
+    marginBottom: 5,
+    marginTop: 5,
   }
 });

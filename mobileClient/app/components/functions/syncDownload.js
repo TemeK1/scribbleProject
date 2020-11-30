@@ -5,16 +5,12 @@
 * We make sure (await) to have all the results before we proceed, just so that logic of the app would stay intact.
 * @API url of API to feth messages
 * @clonedNotes currently existing local notes
+* @orderChanged bool if only order of some notes was changed
+* @return array of Notes
 */
-export async function syncDownload(API, clonedNotes) {
-  try {
-    //let maximumOrder = 1;
-    // Helps to make sure we won't have duplicate order numbers
-    //for (let note of clonedNotes) {
-    //  note.order = maximumOrder;
-    //  maximumOrder++;
-    //}
+export async function syncDownload(API, clonedNotes, orderChanged) {
 
+  try {
     await fetch(API)
       .then(response => response.json())
       .then(data => data.notes.map(item => {
@@ -22,10 +18,10 @@ export async function syncDownload(API, clonedNotes) {
             return note.time === item.time;
           })) {
 
-          // Let's push all notes to array in case we do not have them locally yet
+          // Let's push all notes to array in case we do not have them locally yet.
           clonedNotes.push({
             time: item.time,
-            lastEdited: item.lastEdited,
+            lastEdited: item.lastEdited + 1,
             order: item.order,
             top: item.top,
             left: item.left,
@@ -41,7 +37,6 @@ export async function syncDownload(API, clonedNotes) {
           let note = clonedNotes.find(function(note) {
             return note.time === item.time;
           })
-
           // If remote note has been edited more recently
           if (item.lastEdited > note.lastEdited) {
             note.titleRemote = item.title;
@@ -51,15 +46,16 @@ export async function syncDownload(API, clonedNotes) {
             note.topRemote = item.top;
             note.orderRemote = item.order;
             note.timeRemote = item.time;
-            note.lastEditedRemote = item.lastEdited;
             note.warning = true;
           } else {
             // If not, we can remove warning immediately
             note.warning = false;
-            note.order = item.order;
+            if (!orderChanged) {
+              note.order = item.order;
+            }
           }
+          note.lastEdited = item.lastEdited + 1;
         }
-        //maximumOrder++
       }));
 
   } catch (error) {

@@ -38,7 +38,6 @@ class Synchronize extends React.Component {
       notes: [...this.props.notes]
     }
 
-    this.swap = this.swap.bind(this);
     this.synchronize = this.synchronize.bind(this);
     this.upload = this.upload.bind(this);
   }
@@ -47,35 +46,18 @@ class Synchronize extends React.Component {
   * Here we call two functions to synchronize notes between the client and endpoint.
   */
   async synchronize() {
-    let uploadNotes = true;
-    // Swap the visibility of this Component for the enduser.
-    this.swap();
 
     // Let's not render the notes
     this.props.hideNotes(true);
 
     // We wait until we have downloaded all the remote notes.
-    let clonedNotes = await syncDownload(this.props.api, [...this.props.notes]);
-
-    for (let note of clonedNotes) {
-      // If we find even one note with a mismatch warning, we won't
-      // immediately upload our local notes!!
-      if (note.warning === true) {
-        uploadNotes = false;
-        break;
-      }
-    }
+    let clonedNotes = await syncDownload(this.props.api, [...this.props.notes], this.props.orderChanged);
 
     this.setState({
       notes: clonedNotes
     }, function() {
       this.updateItem(this.state);
     }.bind(this));
-
-    // We proceed to upload immediately if there were no warnings.
-    if (uploadNotes === true) {
-      this.upload(1);
-    }
 
     // Callback to Notes.js
     this.props.updateNotes(clonedNotes);
@@ -121,35 +103,24 @@ class Synchronize extends React.Component {
     this.setState(this.state);
   }
 
-  /*
-  * SWAP for this.state.reveal which
-  * indicates IF the content IS VISIBLE OR NOT.
-  */
-  swap() {
-    if (this.state.reveal === false) {
-      this.setState({reveal: true},
-        function() {
-        this.updateItem(this.state);
-        }.bind(this));
-    } else {
-      this.setState({reveal: false},
-        function() {
-        this.updateItem(this.state);
-        }.bind(this));
-    }
-
-  }
-
   render() {
 
     let renderNotes = [];
-    let warningCount = 0;
-    if (this.state.reveal) {
+    let warning = false,
+        warningCount = 0;
+
+    if (this.props.hideContent) {
 
       for (let note of this.state.notes) {
 
         if (note.warning === true) {
+
+          if (note.text.localeCompare(note.textRemote) === 0 && note.title.localeCompare(note.titleRemote) === 0) {
+            continue;
+          }
+
           warningCount++;
+
           renderNotes.push(<Comparison color={note.color}
             order={note.order} time={note.time} lastEdited={note.lastEdited} title={note.title} text={note.text}
             top={note.top} left={note.left}  colorRemote={note.colorRemote}
@@ -160,21 +131,26 @@ class Synchronize extends React.Component {
       }
 
     }
+
+    if (warningCount > 0) warning = true;
+
     // User will see the warning message and is also prompted to choose whether he likes to prioritize more recent local or remote edits
     //let message = renderNotes.length ? "WARNING! Some of the remote content might have been edited more recently than your local notes. If you confirm to sync Notes between the browser and the endpoint database, you will lose some remote content (a text with red background). Press 'Prioritize local edits' to proceed to syncronize and to upload all the notes to the database, OR 'Prioritize remote edits' to keep the most recent remote edits (YOU WILL LOSE OLDER LOCAL GREEN ONES). This action is irreversible. Keep on mind that apart from these mismatches everything else will be syncronized in such a way that all the notes can be similarly found both from the client and database. In situations where you only use this app through a browser client, it is typically enough to choose 'Priotize local edits'" : "";
     //<View><Text style={{ paddingHorizontal: '5%' }}>{message}</Text></View>
 
     // We render this if the content is visible.
-    let content = this.state.reveal && warningCount > 0 ?
+    let content = this.props.hideContent ?
     <View>
       <View><TouchableOpacity onPress={() => this.synchronize()}><Image source={synchronizeNotes} style={styles.sync}/></TouchableOpacity></View>
-      <View style={{ paddingHorizontal: '5%', width: '100%', zIndex: 9999}}>
-        <Text style={styles.h2}>Remote database contains more recent edits!</Text>
+      <View style={{ marginTop: 20, paddingHorizontal: '3%', width: 400, zIndex: 9999}}>
+       {warning ? <View><Text style={styles.h2}>Remote database contains more recent edits!</Text></View>:<View style={{ width: 400, marginTop: 20 }}><Text style={{ textAlign: 'center' }}>It seems that there are no mismatches between remote and local. Click button to proceed.</Text></View>}
         <View>{renderNotes}</View>
+        {warning ?
         <View style={styles.syncButtons}>
           <View style={{ marginVertical: 10 }}><Button onPress={() => this.upload(1)} title="Prioritize local edits"></Button></View>
           <View><Button onPress={() => this.upload(0)} title="Prioritize remote edits"></Button></View>
         </View>
+      :<View style={{ left: 10,marginVertical: 10 }}><Button style={{ }} onPress={() => this.upload(1)} title="Proceed"></Button></View>}
       </View>
     </View> :
     // And this if the content is not visible.

@@ -10,7 +10,6 @@ body {
 .App {
   position: relative;
   height: 100vh !important;
-  overflow-x: hidden;
   position: relative;
 }
 
@@ -24,7 +23,7 @@ body {
   font-weight: bold;
   text-decoration: underline;
   text-align: center;
-  padding: 1% 6%;
+  padding: 2% 6% 2% 6%;
 }
 
 .Text {
@@ -258,6 +257,10 @@ body {
 
 h2, .syncButtons  {
   margin-left: 2vw;
+}
+
+h2 {
+  width: 95%;
 }
 
 .syncButtons {

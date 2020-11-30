@@ -22,6 +22,7 @@ export function calcOrder(direction, order, notes) {
     for (let i = 0; i < notes.length -1; i++) {
       if (notes[i].order === order) {
          // When right one is found, we swap positions of it and the subsequent note
+         //notes[i].lastEdited = new Date().getTime();
          notes[i].order = notes[i+1].order;
          notes[i+1].order = order;
          break;

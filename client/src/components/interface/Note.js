@@ -149,7 +149,7 @@ class Note extends React.Component {
     </div>:
     // This non-editable version will be rendered if the note is not active
     <div className="nonActive">
-      <div className="Title">{this.props.order}</div><div className="Text">{this.props.text}</div>
+      <div className="Title">{this.props.title}</div><div className="Text">{this.props.text}</div>
       <div className="arrows">
         <div id="arrowUp" onClick={(e) => this.changeOrder(e, 1)}><img src={arrowUp} alt="Arrow up" width="32" height="32"/></div>
         <div id="arrowDown" onClick={(e) => this.changeOrder(e, 0)}><img src={arrowDown} alt="Arrow down" width="32" height="32" /></div>
