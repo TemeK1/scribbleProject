@@ -1,11 +1,12 @@
 import React from 'react';
 
 // Import Images
-import arrowUp from '../../assets/images/arrowUp.png';
-import arrowDown from '../../assets/images/arrowDown.png';
-import cancelNote from '../../assets/images/cancelNote.png';
-import editNote from '../../assets/images/editNote.png';
-import removeNote from '../../assets/images/removeNote.png';
+var imageUrl = 'http://users.jyu.fi/~tekapyla/erikoistyo/images/'
+//import arrowUp from '../../assets/images/arrowUp.png';
+//import arrowDown from '../../assets/images/arrowDown.png';
+//import cancelNote from '../../assets/images/cancelNote.png';
+//import editNote from '../../assets/images/editNote.png';
+//import removeNote from '../../assets/images/removeNote.png';
 
 // Import CSS
 import { styles } from '../../assets/style/styles.js';
@@ -201,9 +202,9 @@ class Note extends React.Component {
     // This editable version will be rendered if the note is active
     <View>
       <View style={styles.buttons}>
-        <View id="cancel"><TouchableOpacity onPress={() => this.setActivity()}><Image source={cancelNote} style={styles.cancel} /></TouchableOpacity></View>
-        <View id="delete"><TouchableOpacity onPress={(e) => this.delete(e)}><Image source={removeNote} style={styles.remove} /></TouchableOpacity></View>
-        <View id="edit"><TouchableOpacity onPress={(e) => this.handleSubmit(e) }><Image source={editNote} style={styles.edit}></Image></TouchableOpacity></View>
+        <View id="cancel"><TouchableOpacity onPress={() => this.setActivity()}><Image source={{ uri: imageUrl + 'cancelNote.png' }} style={styles.cancel} /></TouchableOpacity></View>
+        <View id="delete"><TouchableOpacity onPress={(e) => this.delete(e)}><Image source={{ uri: imageUrl + 'removeNote.png' }} style={styles.remove} /></TouchableOpacity></View>
+        <View id="edit"><TouchableOpacity onPress={(e) => this.handleSubmit(e) }><Image source={{ uri: imageUrl + 'editNote.png' }} style={styles.edit}></Image></TouchableOpacity></View>
       </View>
       <View><TextInput name="title" style={styles.title} value={this.state.title} onChangeText={(title) => this.handleTitle(title)}/></View>
       <View><TextInput multiline={true} style={styles.text} numberOfLines={1} name="text" value={this.state.text} onChangeText={(text) => this.handleText(text)}/></View>
@@ -215,8 +216,8 @@ class Note extends React.Component {
     <View>
       <View><Text style={styles.title}>{this.props.title}</Text></View><View><Text style={styles.text}>{this.props.text}</Text></View>
       <View style={styles.arrows}>
-        <View><Pressable onPress={() => this.changeOrder(1)}><Image source={arrowUp} style={styles.arrow} /></Pressable></View>
-        <View><Pressable onPress={() => this.changeOrder(0)}><Image source={arrowDown} style={styles.arrow} /></Pressable></View>
+        <View><Pressable onPress={() => this.changeOrder(1)}><Image source={{ uri: imageUrl + 'arrowUp.png' }} style={styles.arrow} /></Pressable></View>
+        <View><Pressable onPress={() => this.changeOrder(0)}><Image source={{ uri: imageUrl + 'arrowDown.png' }} style={styles.arrow} /></Pressable></View>
       </View>
     </View>;
 

@@ -83,8 +83,8 @@ export const styles = StyleSheet.create({
     height: 70,
   },
   arrow: {
-    width: 40,
-    height: 40,
+    width: 35,
+    height: 35,
   },
   arrows: {
     flexDirection: 'column',

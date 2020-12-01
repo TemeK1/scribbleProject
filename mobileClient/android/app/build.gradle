@@ -24,10 +24,10 @@ import com.android.build.OutputFile
  *   bundleCommand: "ram-bundle",
  *
  *   // whether to bundle JS and assets in debug mode
- *   bundleInDebug: false,
+ bundleInDebug: true,
  *
  *   // whether to bundle JS and assets in release mode
- *   bundleInRelease: true,
+ bundleInRelease: true,
  *
  *   // whether to bundle JS and assets in another build variant (if configured).
  *   // See http://tools.android.com/tech-docs/new-build-system/user-guide#TOC-Build-Variants

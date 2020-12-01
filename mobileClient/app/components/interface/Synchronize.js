@@ -17,10 +17,11 @@ import {
 
 // Import CSS
 import { styles } from '../../assets/style/styles.js';
-import { Table, Row, Rows } from 'react-native-table-component';
 
+// Image baseURL
+var imageUrl = 'http://users.jyu.fi/~tekapyla/erikoistyo/images/';
 // Import Images
-import synchronizeNotes from '../../assets/images/synchronizeNotes.png';
+// import synchronizeNotes from '../../assets/images/synchronizeNotes.png';
 
 /*
 * To synchronize notes.
@@ -141,9 +142,9 @@ class Synchronize extends React.Component {
     // We render this if the content is visible.
     let content = this.props.hideContent ?
     <View>
-      <View><TouchableOpacity onPress={() => this.synchronize()}><Image source={synchronizeNotes} style={styles.sync}/></TouchableOpacity></View>
-      <View style={{ marginTop: 20, paddingHorizontal: '3%', width: 400, zIndex: 9999}}>
-       {warning ? <View><Text style={styles.h2}>Remote database contains more recent edits!</Text></View>:<View style={{ width: 400, marginTop: 20 }}><Text style={{ textAlign: 'center' }}>It seems that there are no mismatches between remote and local. Click button to proceed.</Text></View>}
+      <View><TouchableOpacity onPress={() => this.synchronize()}><Image source={{ uri: imageUrl + 'synchronizeNotes.png' }} style={styles.sync}/></TouchableOpacity></View>
+      <View style={{ marginTop: 20, paddingHorizontal: '3%', width: 350, zIndex: 9999}}>
+       {warning ? <View><Text style={styles.h2}>Remote database contains more recent edits!</Text></View>:<View style={{ marginTop: 20 }}><Text style={{ textAlign: 'center' }}>It seems that there are no mismatches between remote and local. Click button to proceed.</Text></View>}
         <View>{renderNotes}</View>
         {warning ?
         <View style={styles.syncButtons}>
@@ -154,7 +155,7 @@ class Synchronize extends React.Component {
       </View>
     </View> :
     // And this if the content is not visible.
-    <View><TouchableOpacity onPress={() => this.synchronize()}><Image source={synchronizeNotes} style={styles.sync}/></TouchableOpacity></View>
+    <View><TouchableOpacity onPress={() => this.synchronize()}><Image source={{ uri: imageUrl + 'synchronizeNotes.png' }} style={styles.sync}/></TouchableOpacity></View>
 
     return <View>{content}</View>;
   }
