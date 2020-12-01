@@ -1,30 +1,22 @@
 {
   "files": {
-    "main.css": "/~tekapyla/erikoistyo/static/css/main.467f6c30.chunk.css",
-    "main.js": "/~tekapyla/erikoistyo/static/js/main.36bf10f8.chunk.js",
-    "main.js.map": "/~tekapyla/erikoistyo/static/js/main.36bf10f8.chunk.js.map",
+    "main.css": "/~tekapyla/erikoistyo/static/css/main.87b97b3a.chunk.css",
+    "main.js": "/~tekapyla/erikoistyo/static/js/main.8c5aa160.chunk.js",
+    "main.js.map": "/~tekapyla/erikoistyo/static/js/main.8c5aa160.chunk.js.map",
     "runtime-main.js": "/~tekapyla/erikoistyo/static/js/runtime-main.cb971450.js",
     "runtime-main.js.map": "/~tekapyla/erikoistyo/static/js/runtime-main.cb971450.js.map",
-    "static/js/2.63f7439f.chunk.js": "/~tekapyla/erikoistyo/static/js/2.63f7439f.chunk.js",
-    "static/js/2.63f7439f.chunk.js.map": "/~tekapyla/erikoistyo/static/js/2.63f7439f.chunk.js.map",
+    "static/js/2.ea5111ee.chunk.js": "/~tekapyla/erikoistyo/static/js/2.ea5111ee.chunk.js",
+    "static/js/2.ea5111ee.chunk.js.map": "/~tekapyla/erikoistyo/static/js/2.ea5111ee.chunk.js.map",
     "index.html": "/~tekapyla/erikoistyo/index.html",
-    "precache-manifest.6dc1357983b84f526c15ddd1ef511b88.js": "/~tekapyla/erikoistyo/precache-manifest.6dc1357983b84f526c15ddd1ef511b88.js",
+    "precache-manifest.1be09135aa9855f199e87a1a2311dc46.js": "/~tekapyla/erikoistyo/precache-manifest.1be09135aa9855f199e87a1a2311dc46.js",
     "service-worker.js": "/~tekapyla/erikoistyo/service-worker.js",
-    "static/css/main.467f6c30.chunk.css.map": "/~tekapyla/erikoistyo/static/css/main.467f6c30.chunk.css.map",
-    "static/js/2.63f7439f.chunk.js.LICENSE.txt": "/~tekapyla/erikoistyo/static/js/2.63f7439f.chunk.js.LICENSE.txt",
-    "static/media/addNote.png": "/~tekapyla/erikoistyo/static/media/addNote.29fb74cd.png",
-    "static/media/arrowDown.png": "/~tekapyla/erikoistyo/static/media/arrowDown.2752e169.png",
-    "static/media/arrowUp.png": "/~tekapyla/erikoistyo/static/media/arrowUp.90a260a2.png",
-    "static/media/cancelNote.png": "/~tekapyla/erikoistyo/static/media/cancelNote.f96fac30.png",
-    "static/media/editNote.png": "/~tekapyla/erikoistyo/static/media/editNote.93d10a4a.png",
-    "static/media/removeNote.png": "/~tekapyla/erikoistyo/static/media/removeNote.4cededdd.png",
-    "static/media/scribbleSquare.png": "/~tekapyla/erikoistyo/static/media/scribbleSquare.15fee675.png",
-    "static/media/synchronizeNotes.png": "/~tekapyla/erikoistyo/static/media/synchronizeNotes.098e0e7c.png"
+    "static/css/main.87b97b3a.chunk.css.map": "/~tekapyla/erikoistyo/static/css/main.87b97b3a.chunk.css.map",
+    "static/js/2.ea5111ee.chunk.js.LICENSE.txt": "/~tekapyla/erikoistyo/static/js/2.ea5111ee.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.cb971450.js",
-    "static/js/2.63f7439f.chunk.js",
-    "static/css/main.467f6c30.chunk.css",
-    "static/js/main.36bf10f8.chunk.js"
+    "static/js/2.ea5111ee.chunk.js",
+    "static/css/main.87b97b3a.chunk.css",
+    "static/js/main.8c5aa160.chunk.js"
   ]
 }

@@ -121,7 +121,7 @@ body {
 
 .Note {
   border-radius: 10px;
-  max-width: 20%;
+  max-width: 30%;
   min-height: 5%;
   position: absolute;
   padding: 1% 1% 1% 1%;
@@ -224,7 +224,6 @@ body {
   flex-direction: row;
 }
 
-
 .footer {
   background-color: #63EBC4;
   text-align: center;
@@ -239,6 +238,7 @@ body {
   position: absolute;
   bottom: 0 !important;
   left: 0;
+  top: 5vw;
   height: 100%;
   width: 100vw;
   z-index: 9999;

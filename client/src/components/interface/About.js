@@ -35,6 +35,13 @@ class About extends React.Component {
 
   }
 
+  /*
+  * We just jump to very top of the page when this component is rendered.
+  */
+  componentDidUpdate() {
+    window.scrollTo(0, 0);
+  }
+
   render() {
 
     // We render this if the content is visible.
