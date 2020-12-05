@@ -1,11 +1,11 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "fc376e59b80f267ca0314bd632b4fda9",
+    "revision": "27524db784c577ff403add54fb37f8eb",
     "url": "/~tekapyla/erikoistyo/index.html"
   },
   {
-    "revision": "0c26afb6f50b5132f36f",
-    "url": "/~tekapyla/erikoistyo/static/css/main.87b97b3a.chunk.css"
+    "revision": "d8874e63d2ca61d56486",
+    "url": "/~tekapyla/erikoistyo/static/css/main.fe1a6302.chunk.css"
   },
   {
     "revision": "b463304b7b892dbb8cc8",
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/~tekapyla/erikoistyo/static/js/2.ea5111ee.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "0c26afb6f50b5132f36f",
-    "url": "/~tekapyla/erikoistyo/static/js/main.8c5aa160.chunk.js"
+    "revision": "d8874e63d2ca61d56486",
+    "url": "/~tekapyla/erikoistyo/static/js/main.16f82512.chunk.js"
   },
   {
     "revision": "5656986e1fb7d87d0746",

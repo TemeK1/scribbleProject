@@ -1,9 +1,7 @@
 import React from 'react';
 
-// Image baseURL
-var imageUrl = 'http://users.jyu.fi/~tekapyla/erikoistyo/images/';
 // Import Images
-//import cancelNote from '../../assets/images/cancelNote.png';
+var cancelNote = require('../../assets/images/cancelNote.png');
 
 // Import Style
 import { styles } from '../../assets/style/styles.js';
@@ -67,7 +65,7 @@ class About extends React.Component {
           {this.state.graphics}
         </Text>
       </Pressable>
-      <View style={styles.footer}><Pressable onPress={() => this.about()}><Text>About Scribble 2000</Text></Pressable><Pressable onPress={() => this.about()}><Image source={{ uri: imageUrl + 'cancelNote.png' }} style={styles.cancel} /></Pressable></View>
+      <View style={styles.footer}><Pressable onPress={() => this.about()}><Text>About Scribble 2000</Text></Pressable><Pressable onPress={() => this.about()}><Image source={cancelNote} style={styles.cancel} /></Pressable></View>
     </View>:
     // And this if the content is not visible.
     <View style={styles.footer}><Pressable onPress={() => this.about()}><Text>About Scribble 2000</Text></Pressable></View>;

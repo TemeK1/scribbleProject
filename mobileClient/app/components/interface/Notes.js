@@ -27,11 +27,9 @@ import {handleNotes} from '../functions/handleNotes.js';
 // Import Colors
 import {colors} from '../../assets/colors/color.js';
 
-// Image Base URL
-var imageUrl = 'http://users.jyu.fi/~tekapyla/erikoistyo/images/';
-//import scribbleSquare from '../../assets/images/scribbleSquare.png';
-//import addNote from '../../assets/images/addNote.png'
-//import sync from '../../assets/images/synchronizeNotes.png'
+// Image Images
+var scribbleSquare = require('../../assets/images/scribbleSquare.png');
+var addNote = require('../../assets/images/addNote.png');
 
 // API Constants
 const API = "https://scribble2000endpoint.oa.r.appspot.com/notes"; // Base address...
@@ -350,9 +348,9 @@ class Notes extends React.Component {
           <View>
             <View style={{ flexDirection: "row"}}>
               <View style={{ flexDirection: "column", flex: 0.6, flexWrap: 'wrap' }}><Synchronize api={API} write={WRITE} notes={this.state.notes} orderChanged={this.state.orderChanged} updateNotes={this.updateNotes} hideNotes={this.hideNotes} hideContent={this.state.hideNotes} /></View>
-              <View><Image source={{ uri: imageUrl + 'scribbleSquare.png' }} style={styles.logo} /></View>
+              <View><Image source={scribbleSquare} style={styles.logo} /></View>
               <View><Text style={styles.appTitle}>Scribble 2000</Text></View>
-              <View><TouchableOpacity onPress={() => this.addNew()}><Image source={{ uri: imageUrl + 'addNote.png' }} style={styles.add}/></TouchableOpacity></View>
+              <View><TouchableOpacity onPress={() => this.addNew()}><Image source={addNote} style={styles.add}/></TouchableOpacity></View>
             </View>
           </View>
           <View style={styles.body}>

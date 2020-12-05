@@ -261,7 +261,6 @@ class Notes extends React.Component {
       }
     } else {
       flexStyle = "flexHide";
-      renderNotes.push(<div key={"qwerty123"}><p style={{ textAlign: "center", marginBottom: "2vw" }}>Synchronizing...</p></div>);
     }
 
     //{this.state.hideNotes ? <div><p style={{ textAlign: "center", marginBottom: 2 }}>Synchronizing...</p></div>:null}

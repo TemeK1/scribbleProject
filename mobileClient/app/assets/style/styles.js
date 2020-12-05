@@ -60,6 +60,7 @@ export const styles = StyleSheet.create({
   cancel: {
     width: 40,
     height: 40,
+    alignSelf: 'center',
   },
   edit: {
     width: 50,
@@ -114,7 +115,7 @@ export const styles = StyleSheet.create({
   },
   text: {
     fontSize: 14,
-    paddingHorizontal: 25,
+    paddingHorizontal: 30,
     marginBottom: 5,
     marginTop: 5,
   }
