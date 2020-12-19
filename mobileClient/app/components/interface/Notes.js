@@ -146,7 +146,30 @@ class Notes extends React.Component {
     this.setState({ notes: clonedNotes },
       function() {
       this.updateItem(this.state);
-      }.bind(this));
+    }.bind(this));
+
+    let requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        time: newNote.time,
+        lastEdited: newNote.lastEdited,
+        left: newNote.left,
+        top: newNote.top,
+        title: newNote.title,
+        text: newNote.text,
+        color: newNote.color,
+        order: newNote.order
+      }),
+    };
+
+    // Here we use POST method to transfer one Note to the ENDPOINT
+    await fetch(API + WRITE, requestOptions)
+      .then(response => response.json());
+      .then(response => console.log(response));
+
   }
 
   /*
