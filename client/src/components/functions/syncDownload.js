@@ -28,6 +28,7 @@ export async function syncDownload(API, clonedNotes, orderChanged) {
             color: item.color,
             title: item.title,
             text: item.text,
+            onlyLocal: false,
             // We didn't have this Note locally yet, so there is no need to warn anyone.
             warning: false
           });
@@ -37,6 +38,7 @@ export async function syncDownload(API, clonedNotes, orderChanged) {
           let note = clonedNotes.find(function(note) {
             return note.time === item.time;
           })
+
           // If remote note has been edited more recently
           if (item.lastEdited > note.lastEdited) {
             note.titleRemote = item.title;
@@ -47,9 +49,11 @@ export async function syncDownload(API, clonedNotes, orderChanged) {
             note.orderRemote = item.order;
             note.timeRemote = item.time;
             note.warning = true;
+            note.onlyLocal = false;
           } else {
             // If not, we can remove warning immediately
             note.warning = false;
+            note.onlyLocal = false;
             if (!orderChanged) {
               note.order = item.order;
             }
@@ -61,5 +65,16 @@ export async function syncDownload(API, clonedNotes, orderChanged) {
   } catch (error) {
     console.log(error);
   }
+
+  // We remove a note from memory and localStorage, if remote version does not exist.
+  for (let i = 0; i < clonedNotes.length; i++) {
+    if (typeof clonedNotes[i].onlyLocal === 'undefined') {
+      await localStorage.removeItem(clonedNotes[i].time);
+      await clonedNotes.splice(i, 1);
+    } else {
+      delete clonedNotes[i].onlyLocal;
+    }
+  }
+
   return clonedNotes;
 }

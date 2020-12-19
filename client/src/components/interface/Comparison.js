@@ -14,10 +14,9 @@ class Comparison extends React.Component {
     return (
       <React.Fragment>
       <tr>
-      <td style={{ backgroundColor: "green" }}>{this.props.text}</td>
-      <td style={{ backgroundColor: "red" }}>{this.props.textRemote}</td>
-      <td><span style={{ backgroundColor: "green" }}>{this.props.title}</span> => <span style={{ backgroundColor: "red" }}> {this.props.titleRemote}</span></td>
-      <td>{this.props.time}</td>
+      <td style={{ backgroundColor: '#' + this.props.color }}>{this.props.text}</td>
+      <td style={{ backgroundColor: '#' + this.props.colorRemote }}>{this.props.textRemote}</td>
+      <td><span style={{ backgroundColor: '#' + this.props.color }}>{this.props.title}</span> => <span style={{ backgroundColor: '#' + this.props.colorRemote }}> {this.props.titleRemote}</span></td>
       </tr>
       </React.Fragment>);
   }

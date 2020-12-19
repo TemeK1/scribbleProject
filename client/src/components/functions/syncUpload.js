@@ -12,7 +12,7 @@ export async function syncUpload(API, WRITE, notes, prioritizeLocal) {
 
   try {
     // We care about local more recent edits
-    if (prioritizeLocal === 1) {
+    if (prioritizeLocal === true) {
       for (let note of notes) {
 
         let requestOptions = {

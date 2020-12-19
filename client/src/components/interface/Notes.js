@@ -12,6 +12,8 @@ import {noteTemplate} from '../functions/noteTemplate.js';
 // Import Colors
 import {colors} from '../../assets/colors/color.js';
 
+import {syncUpload} from '../functions/syncUpload.js';
+
 // Import Images
 import scribbleSquare from '../../assets/images/scribbleSquare.png';
 import addNote from '../../assets/images/addNote.png'
@@ -38,7 +40,8 @@ class Notes extends React.Component {
       notes: loadNotes,
       colors: clonedColors,
       hideNotes: false,
-      orderChanged: false
+      orderChanged: false,
+      requestSync: null,
     }
 
     this.addNew = this.addNew.bind(this);
@@ -49,7 +52,8 @@ class Notes extends React.Component {
     this.onDrop = this.onDrop.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.order = this.order.bind(this);
-    this.updateNotes = this.updateNotes.bind(this)
+    this.updateNotes = this.updateNotes.bind(this);
+    this.registerSync = this.registerSync.bind(this);
   }
 
   /*
@@ -104,11 +108,32 @@ class Notes extends React.Component {
     // And update whatever needs to be updated (state, localStorage)
     let clonedNotes = [...this.state.notes];
     clonedNotes.push(newNote);
-    clonedNotes = handleLocalStorage(clonedNotes);
+    clonedNotes = await handleLocalStorage(clonedNotes);
     this.setState({ notes: clonedNotes },
       function() {
       this.updateItem(this.state);
-      }.bind(this));
+    }.bind(this));
+
+    let requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        time: newNote.time,
+        lastEdited: newNote.lastEdited,
+        left: newNote.left,
+        top: newNote.top,
+        title: newNote.title,
+        text: newNote.text,
+        color: newNote.color,
+        order: newNote.order
+      }),
+    };
+
+    // Here we use POST method to transfer one Note to the ENDPOINT
+    await fetch(API + WRITE, requestOptions)
+      .then(response => response.json());
   }
 
   /*
@@ -156,7 +181,7 @@ class Notes extends React.Component {
   /*
   * This will be called when a Note is dragged and then dropped on wide screen edition
   */
-  onDrop(e) {
+  async onDrop(e) {
     e.preventDefault();
     // Order number of dragged note is parsed from dataTransfer.
     let time = parseInt(e.dataTransfer.getData("text/plain"));
@@ -165,33 +190,38 @@ class Notes extends React.Component {
     clonedNotes = calcPosition(clonedNotes, e.clientX, e.clientY, time);
 
     // Make sure changes are stored...
-    clonedNotes = handleLocalStorage(clonedNotes);
-    this.setState({ notes: clonedNotes });
+    clonedNotes = await handleLocalStorage(clonedNotes);
+    await this.setState({ notes: clonedNotes });
+    this.state.requestSync();
   }
 
   /*
   * When a little up or down arrow is clicked (in Note component),
   * This function will be called as a callback.
   */
-  order(direction, order) {
+  async order(direction, order) {
     // First we sort notes to make absolutely sure those are in Descending order.
     let notes = sortNotes([...this.state.notes], false);
     // Then we swap positions of two notes.
     notes = calcOrder(direction, order, notes);
 
     // To make sure changes are stored...
-    notes = handleLocalStorage(notes);
+    notes = await handleLocalStorage(notes);
     this.setState({ notes: notes, orderChanged: true },
       function() {
       this.updateItem(this.state);
-      }.bind(this));
+    }.bind(this));
+
+    // We request a remote sync, because note was edited.
+    this.state.requestSync();
+
   }
 
   /*
   * Callback function for when individual Note
   * is edited and submitted.
   */
-  onSubmit(note) {
+  async onSubmit(note) {
     let clonedNotes = [...this.state.notes];
 
     for (let n of clonedNotes) {
@@ -204,11 +234,14 @@ class Notes extends React.Component {
     }
 
     // To make sure changes are stored...
-    clonedNotes = handleLocalStorage(clonedNotes);
-    this.setState({ notes: clonedNotes },
+    clonedNotes = await handleLocalStorage(clonedNotes);
+    await this.setState({ notes: clonedNotes },
       function() {
       this.updateItem(this.state);
       }.bind(this));
+
+    // We request a remote sync, because note was edited.
+    await this.state.requestSync();
   }
 
   /*
@@ -227,7 +260,7 @@ class Notes extends React.Component {
   /*
   * To remove an individual node from the client-side.
   */
-  delete(time) {
+  async delete(time) {
     let confirmRemove = window.confirm("Do you want to remove the note?");
     if (confirmRemove) {
       let clonedNotes = [...this.state.notes];
@@ -243,8 +276,18 @@ class Notes extends React.Component {
         }
       }
       // ...and UPDATE the state.
-      this.setState({ notes: clonedNotes });
+      await this.setState({ notes: clonedNotes });
     }
+  }
+
+  // We get the function that is used to initialize synchronizing process in Synchronize-component
+  registerSync(syncFunction) {
+    this.setState({ requestSync: syncFunction },
+      function() {
+        this.updateItem(this.state);
+      }.bind(this));
+
+    syncFunction();
   }
 
   render() {
@@ -269,7 +312,7 @@ class Notes extends React.Component {
       return (
         <div className="Full" onDrop={e => this.onDrop(e)} onDragOver={e => this.dragOver(e)}>
           <div className="headerRow">
-            <Synchronize api={API} write={WRITE} notes={this.state.notes} orderChanged={this.state.orderChanged} updateNotes={this.updateNotes} hideNotes={this.hideNotes} hideContent={this.state.hideNotes} />
+            <Synchronize api={API} write={WRITE} provideSync={this.registerSync} notes={this.state.notes} orderChanged={this.state.orderChanged} updateNotes={this.updateNotes} hideNotes={this.hideNotes} hideContent={this.state.hideNotes} />
             <div id="logo"><img src={scribbleSquare} alt="Scribble 2000" width="48" height="48" /><h1>Scribble 2000</h1></div>
             <input type="image" src={addNote} className="add" title="Add new Note" width="48" height="48" alt="Add Note" onClick={this.addNew}></input>
           </div>

@@ -125,10 +125,16 @@ body {
   min-height: 5%;
   position: absolute;
   padding: 1% 1% 1% 1%;
+  overflow-wrap: break-word;
 }
 
 .NoteActive {
   z-index: 999;
+  max-width: 50%;
+}
+
+#text {
+  min-height: 40vh;
 }
 
 .Full {
