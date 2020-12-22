@@ -1,22 +1,22 @@
 {
   "files": {
-    "main.css": "/~tekapyla/erikoistyo/static/css/main.fe1a6302.chunk.css",
-    "main.js": "/~tekapyla/erikoistyo/static/js/main.16f82512.chunk.js",
-    "main.js.map": "/~tekapyla/erikoistyo/static/js/main.16f82512.chunk.js.map",
+    "main.css": "/~tekapyla/erikoistyo/static/css/main.8262cab5.chunk.css",
+    "main.js": "/~tekapyla/erikoistyo/static/js/main.381c2cc9.chunk.js",
+    "main.js.map": "/~tekapyla/erikoistyo/static/js/main.381c2cc9.chunk.js.map",
     "runtime-main.js": "/~tekapyla/erikoistyo/static/js/runtime-main.cb971450.js",
     "runtime-main.js.map": "/~tekapyla/erikoistyo/static/js/runtime-main.cb971450.js.map",
-    "static/js/2.ea5111ee.chunk.js": "/~tekapyla/erikoistyo/static/js/2.ea5111ee.chunk.js",
-    "static/js/2.ea5111ee.chunk.js.map": "/~tekapyla/erikoistyo/static/js/2.ea5111ee.chunk.js.map",
+    "static/js/2.8399cb97.chunk.js": "/~tekapyla/erikoistyo/static/js/2.8399cb97.chunk.js",
+    "static/js/2.8399cb97.chunk.js.map": "/~tekapyla/erikoistyo/static/js/2.8399cb97.chunk.js.map",
     "index.html": "/~tekapyla/erikoistyo/index.html",
-    "precache-manifest.dede89c6f253a54f13739b77a47899f2.js": "/~tekapyla/erikoistyo/precache-manifest.dede89c6f253a54f13739b77a47899f2.js",
+    "precache-manifest.bcf6e2c520377bf637b85757549d0489.js": "/~tekapyla/erikoistyo/precache-manifest.bcf6e2c520377bf637b85757549d0489.js",
     "service-worker.js": "/~tekapyla/erikoistyo/service-worker.js",
-    "static/css/main.fe1a6302.chunk.css.map": "/~tekapyla/erikoistyo/static/css/main.fe1a6302.chunk.css.map",
-    "static/js/2.ea5111ee.chunk.js.LICENSE.txt": "/~tekapyla/erikoistyo/static/js/2.ea5111ee.chunk.js.LICENSE.txt"
+    "static/css/main.8262cab5.chunk.css.map": "/~tekapyla/erikoistyo/static/css/main.8262cab5.chunk.css.map",
+    "static/js/2.8399cb97.chunk.js.LICENSE.txt": "/~tekapyla/erikoistyo/static/js/2.8399cb97.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.cb971450.js",
-    "static/js/2.ea5111ee.chunk.js",
-    "static/css/main.fe1a6302.chunk.css",
-    "static/js/main.16f82512.chunk.js"
+    "static/js/2.8399cb97.chunk.js",
+    "static/css/main.8262cab5.chunk.css",
+    "static/js/main.381c2cc9.chunk.js"
   ]
 }

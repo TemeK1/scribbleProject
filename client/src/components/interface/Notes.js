@@ -12,8 +12,6 @@ import {noteTemplate} from '../functions/noteTemplate.js';
 // Import Colors
 import {colors} from '../../assets/colors/color.js';
 
-import {syncUpload} from '../functions/syncUpload.js';
-
 // Import Images
 import scribbleSquare from '../../assets/images/scribbleSquare.png';
 import addNote from '../../assets/images/addNote.png'
@@ -41,6 +39,7 @@ class Notes extends React.Component {
       colors: clonedColors,
       hideNotes: false,
       orderChanged: false,
+      coordsChanged: false,
       requestSync: null,
     }
 
@@ -60,9 +59,12 @@ class Notes extends React.Component {
   * This is called upon when an individual note is removed.
   * With this we immediately make sure that the Note is also removed from the endpoint DATABASE, and not only from the client-side.
   */
-  syncDelete(time) {
+  async syncDelete(time) {
+
+    console.log(this.state.notes);
+
     try {
-      fetch(API + DELETE + time)
+      await fetch(API + DELETE + time)
       .then(response => response.json())
       .then(data => console.log(data));
     } catch (error) {
@@ -191,7 +193,7 @@ class Notes extends React.Component {
 
     // Make sure changes are stored...
     clonedNotes = await handleLocalStorage(clonedNotes);
-    await this.setState({ notes: clonedNotes });
+    await this.setState({ notes: clonedNotes, coordsChanged: true });
     this.state.requestSync();
   }
 
@@ -201,13 +203,13 @@ class Notes extends React.Component {
   */
   async order(direction, order) {
     // First we sort notes to make absolutely sure those are in Descending order.
-    let notes = sortNotes([...this.state.notes], false);
+    let notes = sortNotes([...this.state.notes]);
     // Then we swap positions of two notes.
     notes = calcOrder(direction, order, notes);
 
     // To make sure changes are stored...
     notes = await handleLocalStorage(notes);
-    this.setState({ notes: notes, orderChanged: true },
+    await this.setState({ notes: notes, orderChanged: true },
       function() {
       this.updateItem(this.state);
     }.bind(this));
@@ -230,6 +232,7 @@ class Notes extends React.Component {
         n.title = note.title;
         n.color = note.color;
         n.lastEdited = new Date().getTime();
+        break;
       }
     }
 
@@ -249,9 +252,9 @@ class Notes extends React.Component {
   * Makes sure that the after the syncronization
   * edits are mirrored to the component's state and localStorage.
   */
-  updateNotes(notes) {
-    notes = handleLocalStorage(notes);
-    this.setState({ notes: notes, orderChanged: false },
+  async updateNotes(notes) {
+    notes = await handleLocalStorage(notes);
+    await this.setState({ notes: notes, orderChanged: false, coordsChanged: false },
       function() {
         this.updateItem(this.state);
       }.bind(this));
@@ -261,15 +264,15 @@ class Notes extends React.Component {
   * To remove an individual node from the client-side.
   */
   async delete(time) {
-    let confirmRemove = window.confirm("Do you want to remove the note?");
-    if (confirmRemove) {
+    //let confirmRemove = window.confirm("Do you want to remove the note?");
+    //if (confirmRemove) {
       let clonedNotes = [...this.state.notes];
       for (let i = 0; i < clonedNotes.length; i++) {
         if (clonedNotes[i].time === time) {
           // We first synchronize the deletion with the ENDPOINT DATABASE..
-          this.syncDelete(clonedNotes[i].time);
+          await this.syncDelete(clonedNotes[i].time);
           // Then we make sure to remove it from localStorage as well...
-          localStorage.removeItem(clonedNotes[i].time);
+          await localStorage.removeItem(clonedNotes[i].time);
           // And lastly splice it off from the array..
           clonedNotes.splice(i, 1);
           break;
@@ -277,7 +280,7 @@ class Notes extends React.Component {
       }
       // ...and UPDATE the state.
       await this.setState({ notes: clonedNotes });
-    }
+    //}
   }
 
   // We get the function that is used to initialize synchronizing process in Synchronize-component
@@ -312,7 +315,7 @@ class Notes extends React.Component {
       return (
         <div className="Full" onDrop={e => this.onDrop(e)} onDragOver={e => this.dragOver(e)}>
           <div className="headerRow">
-            <Synchronize api={API} write={WRITE} provideSync={this.registerSync} notes={this.state.notes} orderChanged={this.state.orderChanged} updateNotes={this.updateNotes} hideNotes={this.hideNotes} hideContent={this.state.hideNotes} />
+            <Synchronize api={API} write={WRITE} provideSync={this.registerSync} notes={this.state.notes} orderChanged={this.state.orderChanged}  coordsChanged={this.state.coordsChanged} updateNotes={this.updateNotes} hideNotes={this.hideNotes} hideContent={this.state.hideNotes} />
             <div id="logo"><img src={scribbleSquare} alt="Scribble 2000" width="48" height="48" /><h1>Scribble 2000</h1></div>
             <input type="image" src={addNote} className="add" title="Add new Note" width="48" height="48" alt="Add Note" onClick={this.addNew}></input>
           </div>

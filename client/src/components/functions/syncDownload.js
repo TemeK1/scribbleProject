@@ -5,10 +5,11 @@
 * We make sure (await) to have all the results before we proceed, just so that logic of the app would stay intact.
 * @API url of API to feth messages
 * @clonedNotes currently existing local notes
-* @orderChanged bool if only order of some notes was changed
+* @orderChanged bool if only order of some note was changed
+* @coordsChanged bool if only coordinates of some note was changed
 * @return array of Notes
 */
-export async function syncDownload(API, clonedNotes, orderChanged) {
+export async function syncDownload(API, clonedNotes, orderChanged, coordsChanged) {
 
   try {
     await fetch(API)
@@ -48,17 +49,23 @@ export async function syncDownload(API, clonedNotes, orderChanged) {
             note.topRemote = item.top;
             note.orderRemote = item.order;
             note.timeRemote = item.time;
+            note.lastEdited = item.lastEdited + 1;
             note.warning = true;
             note.onlyLocal = false;
           } else {
             // If not, we can remove warning immediately
             note.warning = false;
             note.onlyLocal = false;
-            if (!orderChanged) {
-              note.order = item.order;
-            }
           }
-          note.lastEdited = item.lastEdited + 1;
+
+          if (!orderChanged) {
+            note.order = item.order;
+          }
+
+          if (!coordsChanged) {
+            note.left = item.left;
+            note.top = item.top;
+          }
         }
       }));
 
@@ -69,8 +76,8 @@ export async function syncDownload(API, clonedNotes, orderChanged) {
   // We remove a note from memory and localStorage, if remote version does not exist.
   for (let i = 0; i < clonedNotes.length; i++) {
     if (typeof clonedNotes[i].onlyLocal === 'undefined') {
-      await localStorage.removeItem(clonedNotes[i].time);
-      await clonedNotes.splice(i, 1);
+      localStorage.removeItem(clonedNotes[i].time);
+      clonedNotes.splice(i, 1);
     } else {
       delete clonedNotes[i].onlyLocal;
     }

@@ -12,7 +12,7 @@ export async function syncUpload(API, WRITE, notes, prioritizeLocal) {
 
   try {
     // We care about local more recent edits
-    if (prioritizeLocal === 1) {
+    if (prioritizeLocal === true) {
       for (let note of notes) {
 
         let requestOptions = {
@@ -57,8 +57,6 @@ export async function syncUpload(API, WRITE, notes, prioritizeLocal) {
           note.title = note.titleRemote;
           note.text = note.textRemote;
           note.color = note.colorRemote;
-          note.text = note.textRemote;
-          note.left = note.leftRemote;
           note.top = note.topRemote;
           note.order = note.orderRemote;
           delete note.titleRemote;
@@ -66,31 +64,29 @@ export async function syncUpload(API, WRITE, notes, prioritizeLocal) {
           delete note.colorRemote;
           delete note.orderRemote;
           delete note.timeRemote;
-          delete note.leftRemote;
-          delete note.topRemote;
           delete note.warning;
+        } else {
+          let requestOptions = {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              time: note.time,
+              lastEdited: note.lastEdited - 1,
+              left: note.left,
+              top: note.top,
+              title: note.title,
+              text: note.text,
+              color: note.color,
+              order: note.order
+            })
+          };
+          // Here we use POST method to transfer one Note to the ENDPOINT, and wait to make sure.
+          await fetch(API + WRITE, requestOptions)
+            .then(response => response.json())
+            .then(data => console.log(data));
         }
-
-        let requestOptions = {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            time: note.time,
-            lastEdited: note.lastEdited - 1,
-            left: note.left,
-            top: note.top,
-            title: note.title,
-            text: note.text,
-            color: note.color,
-            order: note.order
-          })
-        };
-        // Here we use POST method to transfer one Note to the ENDPOINT, and wait to make sure.
-        await fetch(API + WRITE, requestOptions)
-          .then(response => response.json())
-          .then(data => console.log(data));
       }
 
     }

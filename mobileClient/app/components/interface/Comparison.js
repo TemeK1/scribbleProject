@@ -18,9 +18,10 @@ class Comparison extends React.Component {
     // we highlight the remote note with red backgroundColor
     return (
       <View>
-        <View style={{ backgroundColor: "green" }}><Text>L: {this.props.text}</Text></View>
-        <View style={{ backgroundColor: "red" }}><Text>R: {this.props.textRemote}</Text></View>
-        <View><Text style={{ backgroundColor: "green"}}>L: {this.props.title}</Text><Text style={{ backgroundColor: "red" }}>R: {this.props.titleRemote}</Text></View>
+        <View style={{ backgroundColor: '#' + this.props.color }}><Text>L: {this.props.text}</Text></View>
+        <View style={{ backgroundColor: '#' + this.props.colorRemote }}><Text>R: {this.props.textRemote}</Text></View>
+        <View style={{ backgroundColor: '#' + this.props.color }}><Text>L: {this.props.title}</Text></View>
+        <View style={{ backgroundColor: '#' + this.props.colorRemote }}><Text>R: {this.props.titleRemote}</Text></View>
       </View>);
   }
 }

@@ -69,28 +69,28 @@ export async function syncUpload(API, WRITE, notes, prioritizeLocal) {
           delete note.leftRemote;
           delete note.topRemote;
           delete note.warning;
+        } else {
+          let requestOptions = {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              time: note.time,
+              lastEdited: note.lastEdited - 1,
+              left: note.left,
+              top: note.top,
+              title: note.title,
+              text: note.text,
+              color: note.color,
+              order: note.order
+            })
+          };
+          // Here we use POST method to transfer one Note to the ENDPOINT, and wait to make sure.
+          await fetch(API + WRITE, requestOptions)
+            .then(response => response.json())
+            .then(data => console.log(data));
         }
-
-        let requestOptions = {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            time: note.time,
-            lastEdited: note.lastEdited - 1,
-            left: note.left,
-            top: note.top,
-            title: note.title,
-            text: note.text,
-            color: note.color,
-            order: note.order
-          })
-        };
-        // Here we use POST method to transfer one Note to the ENDPOINT, and wait to make sure.
-        await fetch(API + WRITE, requestOptions)
-          .then(response => response.json())
-          .then(data => console.log(data));
       }
 
     }

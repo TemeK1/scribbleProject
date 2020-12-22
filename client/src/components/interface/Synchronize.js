@@ -22,6 +22,7 @@ class Synchronize extends React.Component {
     this.state = {
       warning: false,
       status: '',
+      notes: [],
     }
 
     this.synchronize = this.synchronize.bind(this);
@@ -31,7 +32,7 @@ class Synchronize extends React.Component {
   /*
   * Here we call two functions to synchronize notes between the client and endpoint.
   */
-  async synchronize(notes) {
+  async synchronize() {
 
     if (this.state.status.localeCompare('Sync...') === 0) {
       return;
@@ -47,10 +48,7 @@ class Synchronize extends React.Component {
     }.bind(this));
 
     // We wait until we have downloaded all the remote notes.
-    let clonedNotes = await syncDownload(this.props.api, [...this.props.notes], this.props.orderChanged);
-
-    // Callback to Notes.js
-    this.props.updateNotes(clonedNotes);
+    let clonedNotes = await syncDownload(this.props.api, [...this.props.notes], this.props.orderChanged, this.props.coordsChanged);
 
     for (let note of clonedNotes) {
 
@@ -71,9 +69,10 @@ class Synchronize extends React.Component {
       warning = true;
     }
 
-    this.setState({
+    await this.setState({
       warning: warning,
       warningNotes: warningNotes,
+      notes: clonedNotes,
     }, function() {
       this.updateItem(this.state);
     }.bind(this));
@@ -90,7 +89,7 @@ class Synchronize extends React.Component {
   async upload(confirmation) {
 
     //... the magic happens here
-    let notes = await syncUpload(this.props.api, this.props.write, [...this.props.notes], confirmation);
+    let notes = await syncUpload(this.props.api, this.props.write, [...this.state.notes], confirmation);
 
     // After successful sync Operation we also update the state
     this.setState({
@@ -100,7 +99,7 @@ class Synchronize extends React.Component {
     }.bind(this));
 
     // Callback to Notes to update Note-elements for the enduser.
-    //this.props.updateNotes(notes);
+    this.props.updateNotes(notes);
 
     // Callback to render notes again
     this.props.hideNotes(false);
@@ -121,11 +120,11 @@ class Synchronize extends React.Component {
     // we relay information of synchronize-function to Notes Component
     this.props.provideSync(this.synchronize);
     // Notes will be synchronized every 60000 (= 1 minute) milliseconds.
-    //this.sync = setInterval(() => { this.synchronize(this.props.notes) }, 10000);
+    this.sync = setInterval(() => { this.synchronize() }, 10000);
   }
 
   componentWillUnmount() {
-    //clearInterval(this.sync);
+    clearInterval(this.sync);
   }
 
   render() {
@@ -162,7 +161,6 @@ class Synchronize extends React.Component {
       <div className="syncButtons">
         <button className="tallennus" onClick={() => this.upload(true)}>Prioritize local edits</button>
         <button className="tallennus" onClick={() => this.upload(false)}>Prioritize remote edits</button>
-        {this.props.status}
       </div>
       </div>
       :null}

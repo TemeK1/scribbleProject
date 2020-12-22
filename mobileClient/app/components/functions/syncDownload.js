@@ -28,6 +28,7 @@ export async function syncDownload(API, clonedNotes, orderChanged) {
             color: item.color,
             title: item.title,
             text: item.text,
+            onlyLocal: false,
             // We didn't have this Note locally yet, so there is no need to warn anyone.
             warning: false
           });
@@ -37,29 +38,36 @@ export async function syncDownload(API, clonedNotes, orderChanged) {
           let note = clonedNotes.find(function(note) {
             return note.time === item.time;
           })
+
           // If remote note has been edited more recently
           if (item.lastEdited > note.lastEdited) {
             note.titleRemote = item.title;
             note.textRemote = item.text;
             note.colorRemote = item.color;
-            note.leftRemote = item.left;
-            note.topRemote = item.top;
             note.orderRemote = item.order;
             note.timeRemote = item.time;
+            note.lastEdited = item.lastEdited + 1;
             note.warning = true;
+            note.onlyLocal = false;
           } else {
             // If not, we can remove warning immediately
             note.warning = false;
-            if (!orderChanged) {
-              note.order = item.order;
-            }
+            note.onlyLocal = false;
           }
-          note.lastEdited = item.lastEdited + 1;
+
+          // No need to compete with these attributes
+          note.left = item.left;
+          note.top = item.top;
+
+          if (!orderChanged) {
+            note.order = item.order;
+          }
         }
       }));
 
   } catch (error) {
     console.log(error);
   }
+  
   return clonedNotes;
 }

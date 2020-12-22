@@ -5,7 +5,6 @@ const Realm = require('realm');
 
 // Import necessary React Native Components
 import {
-  Button,
   Image,
   Text,
   TouchableOpacity,
@@ -52,7 +51,8 @@ class Notes extends React.Component {
       notes: [],
       colors: clonedColors,
       hideNotes: false,
-      orderChanged: false
+      orderChanged: false,
+      requestSync: null,
     };
 
     this.addNew = this.addNew.bind(this);
@@ -63,6 +63,7 @@ class Notes extends React.Component {
     this.order = this.order.bind(this);
     this.updateNotes = this.updateNotes.bind(this);
     this.storeLocal = this.storeLocal.bind(this);
+    this.registerSync = this.registerSync.bind(this);
   }
 
   /*
@@ -142,7 +143,7 @@ class Notes extends React.Component {
     let clonedNotes = [...this.state.notes];
     clonedNotes.push(newNote);
     // Realm storing
-    this.storeLocal(clonedNotes);
+    await this.storeLocal(clonedNotes);
     this.setState({ notes: clonedNotes },
       function() {
       this.updateItem(this.state);
@@ -168,7 +169,6 @@ class Notes extends React.Component {
     // Here we use POST method to transfer one Note to the ENDPOINT
     await fetch(API + WRITE, requestOptions)
       .then(response => response.json());
-      .then(response => console.log(response));
 
   }
 
@@ -262,26 +262,29 @@ class Notes extends React.Component {
   * When a little up or down arrow is clicked (in Note component),
   * This function will be called as a callback.
   */
-  order(direction, order) {
+  async order(direction, order) {
     // First we sort notes to make absolutely sure they are in Descending order.
-    let notes = sortNotes([...this.state.notes], false);
+    let notes = sortNotes([...this.state.notes]);
     // Then we swap positions of two notes.
     notes = calcOrder(direction, order, notes);
 
     // To make sure changes are stored...
     // Realm storing
-    this.storeLocal(notes);
+    await this.storeLocal(notes);
     this.setState({ notes: notes, orderChanged: true },
       function() {
         this.updateItem(this.state);
       }.bind(this));
+
+    // We request a remote sync, because note was edited.
+    this.state.requestSync();
   }
 
   /*
   * Callback function for when individual Note
   * is edited and submitted.
   */
-  onSubmit(note) {
+  async onSubmit(note) {
     let clonedNotes = [...this.state.notes];
     for (let n of clonedNotes) {
       if (n.time === note.time) {
@@ -289,25 +292,45 @@ class Notes extends React.Component {
         n.title = note.title;
         n.color = note.color;
         n.lastEdited = new Date().getTime();
+        break;
       }
     }
 
     // To make sure changes are stored...
     // Realm storing
-    this.storeLocal(clonedNotes);
-    this.setState({ notes: clonedNotes },
+    await this.storeLocal(clonedNotes);
+    await this.setState({ notes: clonedNotes },
       function() {
       this.updateItem(this.state);
       }.bind(this));
+
+    // We request a remote sync, because note was edited.
+    await this.state.requestSync();
   }
 
   /*
   * Callback function (used from Synchronize Component)
   * Makes sure that the after the syncronization
   * edits are mirrored to the component's state and localStorage.
+  * @notes array of notes
+  * @deleteNonExisting indicates whether we should delete non-remotelely anymore existing notes
   */
-  updateNotes(notes) {
-    this.storeLocal(notes);
+  async updateNotes(notes, deleteNonExisting) {
+
+    if (deleteNonExisting) {
+      // We remove notes pending for removal from local database
+      for (let i = 0; i < notes.length; i++) {
+        if (typeof notes[i].onlyLocal === 'undefined') {
+          await this.delete(notes[i].time);
+          notes.splice(i, 1);
+          continue;
+        } else {
+          delete notes[i].onlyLocal;
+        }
+      }
+    }
+
+    await this.storeLocal(notes);
     this.setState({ notes: notes, orderChanged: false },
       function() {
         this.updateItem(this.state);
@@ -317,15 +340,15 @@ class Notes extends React.Component {
   /*
   * To remove an individual node from the client-side.
   */
-  delete(time) {
+  async delete(time) {
     let clonedNotes = [...this.state.notes];
     for (let i = 0; i < clonedNotes.length; i++) {
       if (clonedNotes[i].time === time) {
         // We first synchronize the deletion with the ENDPOINT DATABASE..
-        this.syncDelete(clonedNotes[i].time);
+        await this.syncDelete(clonedNotes[i].time);
         // Then we make sure to remove it from local database as well...
 
-       Realm.open({schema: [Schema.Note]})
+       await Realm.open({schema: [Schema.Note]})
        .then(realm => {
            realm.write(() => {
              let notes = realm.objects('Note');
@@ -346,6 +369,16 @@ class Notes extends React.Component {
         break;
       }
     }
+  }
+
+  // We get the function that is used to initialize synchronizing process in Synchronize-component
+  registerSync(syncFunction) {
+    this.setState({ requestSync: syncFunction },
+      function() {
+        this.updateItem(this.state);
+      }.bind(this));
+
+    //syncFunction();
   }
 
   render() {
@@ -369,8 +402,8 @@ class Notes extends React.Component {
       return (
         <View>
           <View>
-            <View style={{ flexDirection: "row"}}>
-              <View style={{ flexDirection: "column", flex: 0.6, flexWrap: 'wrap' }}><Synchronize api={API} write={WRITE} notes={this.state.notes} orderChanged={this.state.orderChanged} updateNotes={this.updateNotes} hideNotes={this.hideNotes} hideContent={this.state.hideNotes} /></View>
+            <View style={{ flexDirection: "row" }}>
+              <View style={{ flexDirection: "column", flex: 0.6, flexWrap: 'wrap' }}><Synchronize provideSync={this.registerSync} api={API} write={WRITE} notes={this.state.notes} orderChanged={this.state.orderChanged} updateNotes={this.updateNotes} hideNotes={this.hideNotes} hideContent={this.state.hideNotes} /></View>
               <View><Image source={scribbleSquare} style={styles.logo} /></View>
               <View><Text style={styles.appTitle}>Scribble 2000</Text></View>
               <View><TouchableOpacity onPress={() => this.addNew()}><Image source={addNote} style={styles.add}/></TouchableOpacity></View>
