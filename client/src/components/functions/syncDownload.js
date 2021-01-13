@@ -19,52 +19,60 @@ export async function syncDownload(API, clonedNotes, orderChanged, coordsChanged
             return note.time === item.time;
           })) {
 
-          // Let's push all notes to array in case we do not have them locally yet.
-          clonedNotes.push({
-            time: item.time,
-            lastEdited: item.lastEdited + 1,
-            order: item.order,
-            top: item.top,
-            left: item.left,
-            color: item.color,
-            title: item.title,
-            text: item.text,
-            onlyLocal: false,
-            // We didn't have this Note locally yet, so there is no need to warn anyone.
-            warning: false
-          });
-
+          // But only if the remote item is not flagged for removal
+          if (item.isRemoved === false) {
+            // Let's push all notes to array in case we do not have them locally yet.
+            clonedNotes.push({
+              time: item.time,
+              lastEdited: item.lastEdited + 1,
+              order: item.order,
+              top: item.top,
+              left: item.left,
+              color: item.color,
+              title: item.title,
+              text: item.text,
+              isRemoved: false,
+              // We didn't have this Note locally yet, so there is no need to warn anyone.
+              warning: false
+            });
+          }
         } else {
-
+          // Here we have the note locally already
+          // Let's find a remote couple for it.
           let note = clonedNotes.find(function(note) {
             return note.time === item.time;
           })
 
-          // If remote note has been edited more recently
-          if (item.lastEdited > note.lastEdited) {
-            note.titleRemote = item.title;
-            note.textRemote = item.text;
-            note.colorRemote = item.color;
-            note.leftRemote = item.left;
-            note.topRemote = item.top;
-            note.orderRemote = item.order;
-            note.timeRemote = item.time;
-            note.lastEdited = item.lastEdited + 1;
-            note.warning = true;
-            note.onlyLocal = false;
-          } else {
-            // If not, we can remove warning immediately
-            note.warning = false;
-            note.onlyLocal = false;
-          }
+          // But only if the remote item is not flagged for removal
+          if (item.isRemoved === false) {
+            // If remote note has been edited more recently, we will take some precautions
+            let difference = item.lastEdited - note.lastEdited;
+            if (item.lastEdited > note.lastEdited) {
+              note.titleRemote = item.title;
+              note.textRemote = item.text;
+              note.colorRemote = item.color;
+              note.leftRemote = item.left;
+              note.topRemote = item.top;
+              note.orderRemote = item.order;
+              note.timeRemote = item.time;
+              note.lastEdited = item.lastEdited + 1;
+              note.difference = difference;
+              note.warning = true;
+              note.isRemoved = false
+            } else {
+              // If not, we can remove warning immediately
+              note.warning = false;
+              note.isRemoved = false;
+            }
 
-          if (!orderChanged) {
-            note.order = item.order;
-          }
+            if (!orderChanged) {
+              note.order = item.order;
+            }
 
-          if (!coordsChanged) {
-            note.left = item.left;
-            note.top = item.top;
+            if (!coordsChanged) {
+              note.left = item.left;
+              note.top = item.top;
+            }
           }
         }
       }));
@@ -73,15 +81,19 @@ export async function syncDownload(API, clonedNotes, orderChanged, coordsChanged
     console.log(error);
   }
 
-  // We remove a note from memory and localStorage, if remote version does not exist.
+  // We remove a note from memory and localStorage, if remote version is flagged for removal.
   for (let i = 0; i < clonedNotes.length; i++) {
-    if (typeof clonedNotes[i].onlyLocal === 'undefined') {
-      localStorage.removeItem(clonedNotes[i].time);
+
+    if (typeof clonedNotes[i].isRemoved === 'undefined') {
+      await localStorage.removeItem(clonedNotes[i].time);
       clonedNotes.splice(i, 1);
     } else {
-      delete clonedNotes[i].onlyLocal;
+      if (clonedNotes[i].isRemoved === false) {
+        delete clonedNotes[i].isRemoved;
+      }
     }
+
   }
 
-  return clonedNotes;
+  return await clonedNotes;
 }

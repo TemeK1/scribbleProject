@@ -7,11 +7,14 @@ const Note = require('../models/Note.js');
 module.exports =  async (req,res) => {
   try {
     const query = { time: req.body.time  },
-          update = {
+          update = { $set: {
             ...req.body,
+            isRemoved: false }
           },
           options = { upsert: true };
+
     const notes = await Note.findOneAndUpdate(query, update, options);
+    
     res.json({
         notes: notes
     });

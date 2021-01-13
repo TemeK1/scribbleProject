@@ -46,7 +46,7 @@ class Synchronize extends React.Component {
   * Here we call two functions to synchronize notes between the client and endpoint.
   */
   async synchronize() {
-
+    // We don't want to synchronize twice simultaneously
     if (this.state.status.localeCompare('Sync...') === 0) {
       return;
     }
@@ -62,9 +62,7 @@ class Synchronize extends React.Component {
 
     // We wait until we have downloaded all the remote notes.
     let clonedNotes = await syncDownload(this.props.api, [...this.props.notes], this.props.orderChanged);
-
-    // Callback to Notes.js
-    this.props.updateNotes(clonedNotes, true);
+    let differenceExceedsThreshold = false;
 
     for (let note of clonedNotes) {
 
@@ -74,35 +72,48 @@ class Synchronize extends React.Component {
         if (note.color.localeCompare(note.colorRemote) === 0 && note.text.localeCompare(note.textRemote) === 0 && note.title.localeCompare(note.titleRemote) === 0) {
           continue;
         }
+
+        if (note.difference >= 60000) {
+          differenceExceedsThreshold = true;
+        }
+
         warningNotes.push(note);
 
       }
     }
 
-    if (Array.isArray(warningNotes) && warningNotes.length > 0) {
+    // Callback to Notes to update Note-elements for the enduser.
+    await this.props.updateNotes(clonedNotes, true);
+
+    if (!differenceExceedsThreshold) {
+      // If mismatch is not longer than 60s, we upload automatically preferring remote recent edits.
+      this.upload(false);
+    } else if (Array.isArray(warningNotes) && warningNotes.length > 0) {
+      // If mismatch is longer than 60s and there is warnings, we let the user choose what to do.
       // Let's not render the notes for time being
       this.props.hideNotes(true);
       warning = true;
+    } else {
+      // we prefer local more recent updates, because threshold of 60s was not met and/or there were no warnings.
+      this.upload(true);
     }
 
     await this.setState({
       warning: warning,
       warningNotes: warningNotes,
-      notes: clonedNotes,
-    });
+    }, function() {
+      this.updateItem(this.state);
+    }.bind(this));
 
-    if (warning === false) {
-      // we prefer local more recent updates
-      this.upload(true);
-    }
   }
 
   /*
   * We upload local Notes to the endpoint...
   */
   async upload(confirmation) {
+
     //... the magic happens here
-    let notes = await syncUpload(this.props.api, this.props.write, [...this.state.notes], confirmation);
+    let notes = await syncUpload(this.props.api, this.props.write, [...this.props.notes], confirmation);
 
     // After successful sync Operation we also update the state
     this.setState({
@@ -112,10 +123,10 @@ class Synchronize extends React.Component {
     }.bind(this));
 
     // Callback to Notes to update Note-elements for the enduser.
-    this.props.updateNotes(notes, false);
+    await this.props.updateNotes(notes, false);
 
     // Callback to render notes again
-    this.props.hideNotes(false);
+    await this.props.hideNotes(false);
   }
 
   /*

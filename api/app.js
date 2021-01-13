@@ -24,6 +24,7 @@ var cors = require("cors");
 const searchController = require('./controllers/fetchNotes');
 const storeNoteController = require('./controllers/storeNote');
 const deleteNoteController = require('./controllers/deleteNote');
+const checkNoteStatusController = require('./controllers/checkStatus');
 
 // To sanitize the Note input.
 // Middleware.
@@ -45,8 +46,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/notes', searchController);
+app.get('/notes/check/:time', checkNoteStatusController);
 app.post('/notes/write/', cleanInput, storeNoteController);
-app.get('/notes/delete/:time', deleteNoteController);
+app.post('/notes/delete/', cleanInput, deleteNoteController);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

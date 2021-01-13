@@ -15,6 +15,13 @@ export async function syncUpload(API, WRITE, notes, prioritizeLocal) {
     if (prioritizeLocal === true) {
       for (let note of notes) {
 
+        let noteStatus = await fetch(API + '/check/' + note.time)
+          .then(noteStatus => noteStatus.json());
+
+        if (noteStatus.isRemoved === true) {
+          continue;
+        }
+
         let requestOptions = {
           method: 'POST',
           headers: {
@@ -53,10 +60,19 @@ export async function syncUpload(API, WRITE, notes, prioritizeLocal) {
       // Here we chose to prefer remote recent edits so let's store data of those attributes first, per note!
       for (let note of notes) {
 
+        let noteStatus = await fetch(API + '/check/' + note.time)
+          .then(noteStatus => noteStatus.json());
+
+        if (noteStatus.isRemoved === true) {
+          continue;
+        }
+
         if (note.warning === true) {
           note.title = note.titleRemote;
           note.text = note.textRemote;
           note.color = note.colorRemote;
+          note.text = note.textRemote;
+          note.left = note.leftRemote;
           note.top = note.topRemote;
           note.order = note.orderRemote;
           delete note.titleRemote;
@@ -64,6 +80,8 @@ export async function syncUpload(API, WRITE, notes, prioritizeLocal) {
           delete note.colorRemote;
           delete note.orderRemote;
           delete note.timeRemote;
+          delete note.leftRemote;
+          delete note.topRemote;
           delete note.warning;
         } else {
           let requestOptions = {
@@ -84,8 +102,7 @@ export async function syncUpload(API, WRITE, notes, prioritizeLocal) {
           };
           // Here we use POST method to transfer one Note to the ENDPOINT, and wait to make sure.
           await fetch(API + WRITE, requestOptions)
-            .then(response => response.json())
-            .then(data => console.log(data));
+            .then(response => response.json());
         }
       }
 

@@ -95,9 +95,26 @@ class Notes extends React.Component {
   * This is called upon when an individual note is removed.
   * With this we immediately make sure that the Note is also removed from the endpoint DATABASE, and not only from the client-side.
   */
-  syncDelete(time) {
+  async syncDelete(note) {
     try {
-      fetch(API + DELETE + time)
+      let requestOptions = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          time: note.time,
+          lastEdited: note.lastEdited,
+          left: note.left,
+          top: note.top,
+          title: note.title,
+          text: note.text,
+          color: note.color,
+          order: note.order
+        })
+      };
+
+      await fetch(API + DELETE, requestOptions)
       .then(response => response.json());
     } catch (error) {
       console.log(error);
@@ -313,21 +330,22 @@ class Notes extends React.Component {
   * Makes sure that the after the syncronization
   * edits are mirrored to the component's state and localStorage.
   * @notes array of notes
-  * @deleteNonExisting indicates whether we should delete non-remotelely anymore existing notes
+  * @deleteNonExisting indicates whether we should delete only non-remotely existing notes
   */
   async updateNotes(notes, deleteNonExisting) {
 
     if (deleteNonExisting) {
-      // We remove notes pending for removal from local database
+      // We remove a note from memory and localStorage, if remote version is flagged for removal.
       for (let i = 0; i < notes.length; i++) {
-        if (typeof notes[i].onlyLocal === 'undefined') {
+
+        if (typeof notes[i].isRemoved === 'undefined') {
           await this.delete(notes[i].time);
           notes.splice(i, 1);
-          continue;
         } else {
-          delete notes[i].onlyLocal;
+          delete notes[i].isRemoved;
         }
       }
+
     }
 
     await this.storeLocal(notes);
@@ -345,7 +363,7 @@ class Notes extends React.Component {
     for (let i = 0; i < clonedNotes.length; i++) {
       if (clonedNotes[i].time === time) {
         // We first synchronize the deletion with the ENDPOINT DATABASE..
-        await this.syncDelete(clonedNotes[i].time);
+        await this.syncDelete(clonedNotes[i]);
         // Then we make sure to remove it from local database as well...
 
        await Realm.open({schema: [Schema.Note]})

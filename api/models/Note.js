@@ -38,6 +38,10 @@ const NoteSchema = new Schema({
     lastEdited: {
       type: Number,
       required: true
+    },
+    isRemoved: {
+      type: Boolean,
+      required: true,
     }
 });
 

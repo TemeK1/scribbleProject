@@ -17,7 +17,8 @@ import scribbleSquare from '../../assets/images/scribbleSquare.png';
 import addNote from '../../assets/images/addNote.png'
 
 // API Constants
-const API = "https://scribble2000endpoint.oa.r.appspot.com/notes"; // Base address...
+//const API = "https://scribble2000endpoint.oa.r.appspot.com/notes"; // Base address...
+const API = "https://scribble2000endpoint.oa.r.appspot.com/notes";
 const WRITE = "/write/"; // ...for Writing and Editing
 const DELETE = "/delete/"; // ... for Deleting
 const JOKE = "https://sv443.net/jokeapi/v2/joke/Any?blacklistFlags=nsfw,religious,political,racist,sexist&type=single";
@@ -59,14 +60,27 @@ class Notes extends React.Component {
   * This is called upon when an individual note is removed.
   * With this we immediately make sure that the Note is also removed from the endpoint DATABASE, and not only from the client-side.
   */
-  async syncDelete(time) {
-
-    console.log(this.state.notes);
-
+  async syncDelete(note) {
     try {
-      await fetch(API + DELETE + time)
-      .then(response => response.json())
-      .then(data => console.log(data));
+      let requestOptions = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          time: note.time,
+          lastEdited: note.lastEdited,
+          left: note.left,
+          top: note.top,
+          title: note.title,
+          text: note.text,
+          color: note.color,
+          order: note.order
+        })
+      };
+
+      await fetch(API + DELETE, requestOptions)
+      .then(response => response.json());
     } catch (error) {
       console.log(error);
     }
@@ -270,11 +284,11 @@ class Notes extends React.Component {
       for (let i = 0; i < clonedNotes.length; i++) {
         if (clonedNotes[i].time === time) {
           // We first synchronize the deletion with the ENDPOINT DATABASE..
-          await this.syncDelete(clonedNotes[i].time);
+          await this.syncDelete(clonedNotes[i]);
           // Then we make sure to remove it from localStorage as well...
           await localStorage.removeItem(clonedNotes[i].time);
           // And lastly splice it off from the array..
-          clonedNotes.splice(i, 1);
+          await clonedNotes.splice(i, 1);
           break;
         }
       }
